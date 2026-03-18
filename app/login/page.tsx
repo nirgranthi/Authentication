@@ -1,12 +1,13 @@
 'use client'
 
 import { ChangeEvent, SubmitEvent, useState } from 'react'
-import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, MoonSvg, SunSvg } from '../styles/Svgs'
+import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, MoonSvg, SunSvg, EyeSvg, EyeOffSvg } from '../styles/Svgs'
 import { StyledWrapper } from '../styles/LoginCSS'
 import { isEmail } from '../scripts/isEmail'
 
 export default function Login() {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const [userdata, setUserdata] = useState({
     username: '',
@@ -57,8 +58,11 @@ export default function Login() {
           </div>
           <div className="inputForm">
             <PasswordSvg />
-            <input placeholder="Enter your Password" className="input" type="password" required
+            <input placeholder="Enter your Password" className="input" type={showPassword ? "text" : "password"} required
               value={userdata.password} onChange={(e) => setUserdata({ ...userdata, password: e.target.value })} />
+            <span style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={() => setShowPassword(!showPassword)}>
+              {showPassword ? <EyeOffSvg /> : <EyeSvg />}
+            </span>
           </div>
 
           <div className="flexRow">

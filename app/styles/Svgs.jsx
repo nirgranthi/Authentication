@@ -117,3 +117,16 @@ export const SunSvg = () => (
         <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
     </svg>
 )
+
+export const EyeSvg = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-eye">
+        <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/>
+        <circle cx="12" cy="12" r="3"/>
+    </svg>
+)
+
+export const EyeOffSvg = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-eye-off">
+        <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.579 1 1 0 0 1 0 .696 10.777 10.777 0 0 1-1.4 2.246M14.02 14.02a3 3 0 0 1-4.242-4.242M1.73 1.73l20.54 20.54M2.062 12.348a1 1 0 0 0 0 .696 10.75 10.75 0 0 0 15.655 4.908"/>
+    </svg>
+)
