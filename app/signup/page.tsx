@@ -28,11 +28,14 @@ export default function Signup() {
 
         try {
             const hashedPassword = await encrypt(userdata.password)
-            setUserdata(prev => ({ ...prev, password: hashedPassword}))
-            
-            const resIsUser = await axios.post("/api/checkUserExists", JSON.stringify(userdata))
-            if (resIsUser) {
-                console.log("user already exists: ", resIsUser)
+
+            const checkResponse = await axios.post("/api/checkUserExists", JSON.stringify({email: userdata.email, username: userdata.username, password: hashedPassword}))
+            if (checkResponse.data.email) {
+                console.log("email already exists: ")
+                return
+            }
+            if (checkResponse.data.username) {
+                console.log("Username already exists: ")
                 return
             }
             const res = await axios.post("/api/signup", JSON.stringify(userdata))
