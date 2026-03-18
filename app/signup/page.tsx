@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, MoonSvg, SunSvg } from '../styles/Svgs'
 import { StyledWrapper } from '../styles/LoginCSS'
 
-export default function Login  () {
+export default function Signup  () {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   return (
@@ -12,7 +12,7 @@ export default function Login  () {
       <div className="wrapper">
         <form className="form">
           <div className="flexRow" style={{ marginBottom: '10px' }}>
-            <h2>Sign In</h2>
+            <h2>Sign Up</h2>
             <button 
               type="button" 
               className="themeToggle"
@@ -43,7 +43,7 @@ export default function Login  () {
             <span className="span">Forgot password?</span>
           </div>
           <button className="buttonSubmit">Sign In</button>
-          <p className="p">{`Don't have an account?`} <a href="/signup" className="span">Sign Up</a></p>
+          <p className="p">{`Already have an account?`} <a href="/login" className="span">Sign In</a></p>
           <div className="flexRow">
             <button className="btn">
               <GoogleSvg />
