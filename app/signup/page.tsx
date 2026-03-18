@@ -4,6 +4,7 @@ import { useState, ChangeEvent, SubmitEvent } from 'react'
 import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, MoonSvg, SunSvg, UsernameSvg, EyeSvg, EyeOffSvg } from '../styles/Svgs'
 import { StyledWrapper } from '../styles/LoginCSS'
 import Link from 'next/link';
+import axios from 'axios';
 
 export default function Signup() {
     const [isDarkMode, setIsDarkMode] = useState(false);
@@ -20,9 +21,15 @@ export default function Signup() {
         setUserdata(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log(userdata);
+
+        try {
+            await axios.post("/api/signup", JSON.stringify(userdata))
+        } catch (error) {
+            console.log(error)
+        }
     };
 
     return (
