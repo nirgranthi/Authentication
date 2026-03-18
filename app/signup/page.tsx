@@ -6,10 +6,12 @@ import { StyledWrapper } from '../styles/LoginCSS'
 import Link from 'next/link';
 import axios from 'axios';
 import { encrypt } from '../scripts/encrypt';
+import { useRouter } from 'next/navigation';
 
 export default function Signup() {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const router = useRouter()
 
     const [userdata, setUserdata] = useState({
         email: '',
@@ -39,7 +41,12 @@ export default function Signup() {
                 return
             }
             const res = await axios.post("/api/signup", JSON.stringify(userdata))
-            console.log("response: ", res)
+            console.log(res)
+            if (res.status === 201) {
+                const form = e.target;
+                form.reset()
+                router.push("/login")
+            } else { console.log("User registration failed")}
         } catch (error) {
             console.log(error)
         }
