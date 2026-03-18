@@ -5,6 +5,7 @@ import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, MoonSvg, SunSvg, UsernameSv
 import { StyledWrapper } from '../styles/LoginCSS'
 import Link from 'next/link';
 import axios from 'axios';
+import { encrypt } from '../scripts/encrypt';
 
 export default function Signup() {
     const [isDarkMode, setIsDarkMode] = useState(false);
@@ -26,7 +27,16 @@ export default function Signup() {
         console.log(userdata);
 
         try {
-            await axios.post("/api/signup", JSON.stringify(userdata))
+            const hashedPassword = await encrypt(userdata.password)
+            setUserdata(prev => ({ ...prev, password: hashedPassword}))
+            
+            const resIsUser = await axios.post("/api/checkUserExists", JSON.stringify(userdata))
+            if (resIsUser) {
+                console.log("user already exists: ", resIsUser)
+                return
+            }
+            const res = await axios.post("/api/signup", JSON.stringify(userdata))
+            console.log("response: ", res)
         } catch (error) {
             console.log(error)
         }
