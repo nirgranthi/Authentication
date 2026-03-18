@@ -3,6 +3,7 @@
 import { useState, ChangeEvent, SubmitEvent } from 'react'
 import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, MoonSvg, SunSvg, UsernameSvg, EyeSvg, EyeOffSvg } from '../styles/Svgs'
 import { StyledWrapper } from '../styles/LoginCSS'
+import Link from 'next/link';
 
 export default function Signup() {
     const [isDarkMode, setIsDarkMode] = useState(false);
@@ -80,7 +81,7 @@ export default function Signup() {
 
                     <p className="p">
                         {`Already have an account?`}
-                        <a href="/login" className="span">Sign In</a>
+                        <Link href="/login" className="span">Sign In</Link>
                     </p>
 
                     <div className="flexRow">

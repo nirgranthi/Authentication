@@ -4,6 +4,7 @@ import { ChangeEvent, SubmitEvent, useState } from 'react'
 import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, MoonSvg, SunSvg, EyeSvg, EyeOffSvg } from '../styles/Svgs'
 import { StyledWrapper } from '../styles/LoginCSS'
 import { isEmail } from '../scripts/isEmail'
+import Link from 'next/link'
 
 export default function Login() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -73,7 +74,7 @@ export default function Login() {
             <span className="span">Forgot password?</span>
           </div>
           <button className="buttonSubmit">Sign In</button>
-          <p className="p">{`Don't have an account?`} <a href="/signup" className="span">Sign Up</a></p>
+          <p className="p">{`Don't have an account?`} <Link href="/signup" className="span">Sign Up</Link></p>
           <div className="flexRow">
             <button className="btn">
               <GoogleSvg />
