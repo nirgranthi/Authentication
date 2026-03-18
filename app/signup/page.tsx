@@ -18,7 +18,7 @@ export default function Signup() {
         setUserdata(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e: SubmitEvent) => {
+    const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log(userdata);
     };
