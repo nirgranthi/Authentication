@@ -252,6 +252,31 @@ export const StyledWrapper = styled.div`
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   }
 
+  .buttonSubmit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .buttonSubmit:disabled:hover {
+    transform: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), inset 0 2px 0 rgba(255,255,255,0.1);
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.4);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
   .errorMsg {
     color: #ff4d4f;
     font-size: 13px;

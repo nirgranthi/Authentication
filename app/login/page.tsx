@@ -2,16 +2,18 @@
 
 import { ChangeEvent, SubmitEvent, useState } from 'react'
 import { useDarkMode } from '../hooks/useDarkMode'
-import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, MoonSvg, SunSvg, EyeSvg, EyeOffSvg } from '../styles/Svgs'
+import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, EyeSvg, EyeOffSvg } from '../components/Svgs'
 import { StyledWrapper } from '../styles/LoginCSS'
 import { isEmail } from '../scripts/isEmail'
 import Link from 'next/link'
 import { signIn } from 'next-auth/react'
+import { DarkModeButton, SignInButton } from '../components/Buttons'
 
 export default function Login() {
   const [isDarkMode, setIsDarkMode] = useDarkMode(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const [userdata, setUserdata] = useState({
     username: '',
@@ -21,6 +23,7 @@ export default function Login() {
 
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const res = await signIn("credentials", {
         email: userdata.email,
@@ -37,6 +40,8 @@ export default function Login() {
       }
     } catch (error) {
       console.log("Login exception:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -56,13 +61,7 @@ export default function Login() {
         <form className="form" onSubmit={handleSubmit}>
           <div className="flexRow" style={{ marginBottom: '10px' }}>
             <h2>Sign In</h2>
-            <button
-              type="button"
-              className="themeToggle"
-              onClick={() => setIsDarkMode(!isDarkMode)}
-            >
-              {isDarkMode ? <SunSvg /> : <MoonSvg />}
-            </button>
+            <DarkModeButton isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
           </div>
 
           <div className="flexColumn">
@@ -94,7 +93,7 @@ export default function Login() {
             <span className="span">Forgot password?</span>
           </div>
           {error && <div className="errorMsg">{error}</div>}
-          <button className="buttonSubmit">Sign In</button>
+          <SignInButton isLoading={isLoading} text="Sign In" />
           <p className="p">{`Don't have an account?`} <Link href="/signup" className="span">Sign Up</Link></p>
           <div className="flexRow">
             <button className="btn">

@@ -2,17 +2,19 @@
 
 import { useState, ChangeEvent, SubmitEvent } from 'react'
 import { useDarkMode } from '../hooks/useDarkMode'
-import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, MoonSvg, SunSvg, UsernameSvg, EyeSvg, EyeOffSvg } from '../styles/Svgs'
+import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, UsernameSvg, EyeSvg, EyeOffSvg } from '../components/Svgs'
 import { StyledWrapper } from '../styles/LoginCSS'
 import Link from 'next/link';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { DarkModeButton, SignInButton } from '../components/Buttons'
 
 export default function Signup() {
     const [isDarkMode, setIsDarkMode] = useDarkMode(false);
     const [showPassword, setShowPassword] = useState(false);
     const [emailError, setEmailError] = useState('');
     const [usernameError, setUsernameError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter()
 
     const [userdata, setUserdata] = useState({
@@ -31,6 +33,7 @@ export default function Signup() {
     const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log(userdata);
+        setIsLoading(true);
 
         try {
             const checkResponse = await axios.post("/api/checkUserExists", JSON.stringify({ email: userdata.email, username: userdata.username }))
@@ -51,6 +54,8 @@ export default function Signup() {
             } else { console.log("User registration failed") }
         } catch (error) {
             console.log(error)
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -60,13 +65,7 @@ export default function Signup() {
                 <form className="form" onSubmit={handleSubmit}>
                     <div className="flexRow" style={{ marginBottom: '10px' }}>
                         <h2>Sign Up</h2>
-                        <button
-                            type="button"
-                            className="themeToggle"
-                            onClick={() => setIsDarkMode(!isDarkMode)}
-                        >
-                            {isDarkMode ? <SunSvg /> : <MoonSvg />}
-                        </button>
+                        <DarkModeButton isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
                     </div>
 
                     <div className="flexColumn">
@@ -108,7 +107,7 @@ export default function Signup() {
                         </label>
                     </div>
 
-                    <button className="buttonSubmit">Sign Up</button>
+                    <SignInButton isLoading={isLoading} text="Sign Up" />
 
                     <p className="p">
                         {`Already have an account?`}
