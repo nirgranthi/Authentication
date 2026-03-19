@@ -2,12 +2,12 @@
 
 import { ChangeEvent, SubmitEvent, useState } from 'react'
 import { useDarkMode } from '../hooks/useDarkMode'
-import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, EyeSvg, EyeOffSvg } from '../components/Svgs'
+import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg } from '../components/Svgs'
 import { StyledWrapper } from '../styles/LoginCSS'
 import { isEmail } from '../scripts/isEmail'
 import Link from 'next/link'
 import { signIn } from 'next-auth/react'
-import { DarkModeButton, SignInButton } from '../components/Buttons'
+import { DarkModeButton, ShowPasswordButton, SignInButton } from '../components/Buttons'
 
 export default function Login() {
   const [isDarkMode, setIsDarkMode] = useDarkMode(false);
@@ -80,18 +80,17 @@ export default function Login() {
             <PasswordSvg />
             <input placeholder="Enter your Password" className="input" type={showPassword ? "text" : "password"} required
               value={userdata.password} onChange={(e) => { setError(''); setUserdata({ ...userdata, password: e.target.value }); }} />
-            <span style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={() => setShowPassword(!showPassword)}>
-              {showPassword ? <EyeOffSvg /> : <EyeSvg />}
-            </span>
+            <ShowPasswordButton showPassword={showPassword} setShowPassword={setShowPassword} />
           </div>
 
           <div className="flexRow">
             <label className="rememberMe">
-              <input type="checkbox" />
+              <input type="checkbox" defaultChecked />
               <span>Remember me</span>
             </label>
             <span className="span">Forgot password?</span>
           </div>
+
           {error && <div className="errorMsg">{error}</div>}
           <SignInButton isLoading={isLoading} text="Sign In" />
           <p className="p">{`Don't have an account?`} <Link href="/signup" className="span">Sign Up</Link></p>

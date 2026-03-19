@@ -2,12 +2,12 @@
 
 import { useState, ChangeEvent, SubmitEvent } from 'react'
 import { useDarkMode } from '../hooks/useDarkMode'
-import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, UsernameSvg, EyeSvg, EyeOffSvg } from '../components/Svgs'
+import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, UsernameSvg } from '../components/Svgs'
 import { StyledWrapper } from '../styles/LoginCSS'
 import Link from 'next/link';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import { DarkModeButton, SignInButton } from '../components/Buttons'
+import { DarkModeButton, ShowPasswordButton, SignInButton } from '../components/Buttons'
 
 export default function Signup() {
     const [isDarkMode, setIsDarkMode] = useDarkMode(false);
@@ -95,14 +95,12 @@ export default function Signup() {
                         <PasswordSvg />
                         <input name="password" value={userdata.password} onChange={handleChange}
                             placeholder="Enter your Password" className="input" type={showPassword ? "text" : "password"} required />
-                        <span style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={() => setShowPassword(!showPassword)}>
-                            {showPassword ? <EyeOffSvg /> : <EyeSvg />}
-                        </span>
+                        <ShowPasswordButton showPassword={showPassword} setShowPassword={setShowPassword} />
                     </div>
 
                     <div className="flexRow">
                         <label className="rememberMe">
-                            <input type="checkbox" />
+                            <input type="checkbox" defaultChecked />
                             <span>Remember me</span>
                         </label>
                     </div>

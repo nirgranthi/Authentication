@@ -1,4 +1,4 @@
-import { MoonSvg, SunSvg } from "./Svgs"
+import { EyeOffSvg, EyeSvg, MoonSvg, SunSvg } from "./Svgs"
 
 export const SignInButton = ({ isLoading, text }) => {
     return (
@@ -24,5 +24,13 @@ export const DarkModeButton = ({ isDarkMode, setIsDarkMode }) => {
         >
             {isDarkMode ? <SunSvg /> : <MoonSvg />}
         </button>
+    )
+}
+
+export const ShowPasswordButton = ({ showPassword, setShowPassword }) => {
+    return (
+        <span style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={() => setShowPassword(!showPassword)}>
+            {showPassword ? <EyeOffSvg /> : <EyeSvg />}
+        </span>
     )
 }
