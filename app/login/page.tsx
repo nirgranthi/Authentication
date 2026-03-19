@@ -5,6 +5,7 @@ import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, MoonSvg, SunSvg, EyeSvg, Ey
 import { StyledWrapper } from '../styles/LoginCSS'
 import { isEmail } from '../scripts/isEmail'
 import Link from 'next/link'
+import { signIn } from 'next-auth/react'
 
 export default function Login() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -16,10 +17,26 @@ export default function Login() {
     password: ''
   })
 
-  const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(userdata);
-  }
+    try {
+      const res = await signIn("credentials", {
+        email: userdata.email,
+        username: userdata.username,
+        password: userdata.password,
+        redirect: false,
+      });
+      
+      if (res?.error) {
+        console.log(res)
+        console.log("Login error:", res.error);
+      } else {
+        console.log("Login successful:", res);
+      }
+    } catch (error) {
+      console.log("Login exception:", error);
+    }
+  };
 
   const handleIdentifierChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value

@@ -5,7 +5,6 @@ import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, MoonSvg, SunSvg, UsernameSv
 import { StyledWrapper } from '../styles/LoginCSS'
 import Link from 'next/link';
 import axios from 'axios';
-import { encrypt } from '../scripts/encrypt';
 import { useRouter } from 'next/navigation';
 
 export default function Signup() {
@@ -29,9 +28,7 @@ export default function Signup() {
         console.log(userdata);
 
         try {
-            const hashedPassword = await encrypt(userdata.password)
-
-            const checkResponse = await axios.post("/api/checkUserExists", JSON.stringify({email: userdata.email, username: userdata.username, password: hashedPassword}))
+            const checkResponse = await axios.post("/api/checkUserExists", JSON.stringify({email: userdata.email, username: userdata.username}))
             if (checkResponse.data.email) {
                 console.log("email already exists: ")
                 return
