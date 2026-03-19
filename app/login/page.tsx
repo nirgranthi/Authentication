@@ -10,6 +10,7 @@ import { signIn } from 'next-auth/react'
 export default function Login() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
 
   const [userdata, setUserdata] = useState({
     username: '',
@@ -28,8 +29,8 @@ export default function Login() {
       });
       
       if (res?.error) {
-        console.log(res)
         console.log("Login error:", res.error);
+        setError("Invalid username/email or password");
       } else {
         console.log("Login successful:", res);
       }
@@ -39,6 +40,7 @@ export default function Login() {
   };
 
   const handleIdentifierChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setError('');
     const value = e.target.value
     if (isEmail(value)) {
       setUserdata({ ...userdata, email: value, username: '' });
@@ -77,7 +79,7 @@ export default function Login() {
           <div className="inputForm">
             <PasswordSvg />
             <input placeholder="Enter your Password" className="input" type={showPassword ? "text" : "password"} required
-              value={userdata.password} onChange={(e) => setUserdata({ ...userdata, password: e.target.value })} />
+              value={userdata.password} onChange={(e) => { setError(''); setUserdata({ ...userdata, password: e.target.value }); }} />
             <span style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={() => setShowPassword(!showPassword)}>
               {showPassword ? <EyeOffSvg /> : <EyeSvg />}
             </span>
@@ -90,6 +92,7 @@ export default function Login() {
             </label>
             <span className="span">Forgot password?</span>
           </div>
+          {error && <div className="errorMsg">{error}</div>}
           <button className="buttonSubmit">Sign In</button>
           <p className="p">{`Don't have an account?`} <Link href="/signup" className="span">Sign Up</Link></p>
           <div className="flexRow">

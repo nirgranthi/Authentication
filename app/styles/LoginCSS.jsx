@@ -251,6 +251,14 @@ export const StyledWrapper = styled.div`
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   }
 
+  .errorMsg {
+    color: #ff4d4f;
+    font-size: 13px;
+    margin-top: 5px;
+    margin-left: 5px;
+    font-weight: 500;
+  }
+
   .p {
     text-align: center;
     color: #151717;

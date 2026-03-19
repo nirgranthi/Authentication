@@ -10,6 +10,8 @@ import { useRouter } from 'next/navigation';
 export default function Signup() {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [emailError, setEmailError] = useState('');
+    const [usernameError, setUsernameError] = useState('');
     const router = useRouter()
 
     const [userdata, setUserdata] = useState({
@@ -21,6 +23,8 @@ export default function Signup() {
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setUserdata(prev => ({ ...prev, [name]: value }));
+        if (name === 'email') setEmailError('');
+        if (name === 'username') setUsernameError('');
     };
 
     const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
@@ -31,10 +35,12 @@ export default function Signup() {
             const checkResponse = await axios.post("/api/checkUserExists", JSON.stringify({email: userdata.email, username: userdata.username}))
             if (checkResponse.data.email) {
                 console.log("email already exists: ")
+                setEmailError("Email is already in use");
                 return
             }
             if (checkResponse.data.username) {
                 console.log("Username already exists: ")
+                setUsernameError("Username is already in use");
                 return
             }
             const res = await axios.post("/api/signup", JSON.stringify(userdata))
@@ -72,6 +78,7 @@ export default function Signup() {
                         <input name="username" value={userdata.username} onChange={handleChange}
                             placeholder="Enter your Username" className="input" type="text" required />
                     </div>
+                    {usernameError && <div className="errorMsg">{usernameError}</div>}
 
                     <div className="flexColumn">
                         <label>Email </label>
@@ -81,6 +88,7 @@ export default function Signup() {
                         <input name="email" value={userdata.email} onChange={handleChange}
                             placeholder="Enter your Email" className="input" type="email" required />
                     </div>
+                    {emailError && <div className="errorMsg">{emailError}</div>}
 
                     <div className="flexColumn">
                         <label>Password </label>
