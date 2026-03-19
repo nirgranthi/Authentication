@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, ChangeEvent, SubmitEvent } from 'react'
+import { useDarkMode } from '../hooks/useDarkMode'
 import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, MoonSvg, SunSvg, UsernameSvg, EyeSvg, EyeOffSvg } from '../styles/Svgs'
 import { StyledWrapper } from '../styles/LoginCSS'
 import Link from 'next/link';
@@ -8,7 +9,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
 export default function Signup() {
-    const [isDarkMode, setIsDarkMode] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useDarkMode(false);
     const [showPassword, setShowPassword] = useState(false);
     const [emailError, setEmailError] = useState('');
     const [usernameError, setUsernameError] = useState('');
@@ -32,14 +33,12 @@ export default function Signup() {
         console.log(userdata);
 
         try {
-            const checkResponse = await axios.post("/api/checkUserExists", JSON.stringify({email: userdata.email, username: userdata.username}))
+            const checkResponse = await axios.post("/api/checkUserExists", JSON.stringify({ email: userdata.email, username: userdata.username }))
             if (checkResponse.data.email) {
-                console.log("email already exists: ")
                 setEmailError("Email is already in use");
                 return
             }
             if (checkResponse.data.username) {
-                console.log("Username already exists: ")
                 setUsernameError("Username is already in use");
                 return
             }
@@ -49,7 +48,7 @@ export default function Signup() {
                 const form = e.target;
                 form.reset()
                 router.push("/login")
-            } else { console.log("User registration failed")}
+            } else { console.log("User registration failed") }
         } catch (error) {
             console.log(error)
         }

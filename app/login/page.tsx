@@ -1,6 +1,7 @@
 'use client'
 
 import { ChangeEvent, SubmitEvent, useState } from 'react'
+import { useDarkMode } from '../hooks/useDarkMode'
 import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, MoonSvg, SunSvg, EyeSvg, EyeOffSvg } from '../styles/Svgs'
 import { StyledWrapper } from '../styles/LoginCSS'
 import { isEmail } from '../scripts/isEmail'
@@ -8,7 +9,7 @@ import Link from 'next/link'
 import { signIn } from 'next-auth/react'
 
 export default function Login() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useDarkMode(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
@@ -27,7 +28,7 @@ export default function Login() {
         password: userdata.password,
         redirect: false,
       });
-      
+
       if (res?.error) {
         console.log("Login error:", res.error);
         setError("Invalid username/email or password");

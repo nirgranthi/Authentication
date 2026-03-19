@@ -168,6 +168,7 @@ export const StyledWrapper = styled.div`
     display: flex;
     align-items: center;
     padding-left: 10px;
+    padding-right: 5px;
     transition: 0.2s ease-in-out;
     background-color: #fff;
   }
