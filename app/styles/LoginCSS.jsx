@@ -59,17 +59,6 @@ export const StyledWrapper = styled.div`
       color: #4da3ff;
     }
 
-    .buttonSubmit {
-      background-color: #4da3ff;
-      color: #121212;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4), inset 0 2px 0 rgba(255,255,255,0.2);
-    }
-
-    .buttonSubmit:hover {
-      background-color: #3b8ce0;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), inset 0 2px 0 rgba(255,255,255,0.2);
-    }
-
     .p {
       color: #e0e0e0;
     }
@@ -82,14 +71,6 @@ export const StyledWrapper = styled.div`
 
     .btn:hover {
       border-color: #4da3ff;
-    }
-
-    .themeToggle {
-      color: #e0e0e0;
-    }
-    
-    .themeToggle:hover {
-      background-color: #333;
     }
   }
 
@@ -131,23 +112,6 @@ export const StyledWrapper = styled.div`
 
   .form button {
     align-self: flex-end;
-  }
-
-  .themeToggle {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px;
-    border-radius: 50%;
-    color: #151717;
-    transition: background-color 0.2s, color 0.2s;
-  }
-
-  .themeToggle:hover {
-    background-color: #eee;
   }
 
   .flexColumn {
@@ -224,59 +188,7 @@ export const StyledWrapper = styled.div`
     font-weight: 500;
     cursor: pointer;
   }
-
-  .buttonSubmit {
-    margin: 20px 0 10px 0;
-    background-color: #151717;
-    border: none;
-    color: white;
-    font-size: 15px;
-    font-weight: 600;
-    border-radius: 10px;
-    height: 50px;
-    width: 100%;
-    cursor: pointer;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), inset 0 2px 0 rgba(255,255,255,0.1);
-    transform: translateY(0);
-    transition: all 0.2s ease;
-  }
-
-  .buttonSubmit:hover {
-    background-color: #2a2c2c;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25), inset 0 2px 0 rgba(255,255,255,0.1);
-  }
-  
-  .buttonSubmit:active {
-    transform: translateY(1px);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  }
-
-  .buttonSubmit:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  .buttonSubmit:disabled:hover {
-    transform: none;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), inset 0 2px 0 rgba(255,255,255,0.1);
-  }
-
-  .spinner {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 3px solid rgba(255, 255, 255, 0.4);
-    border-top-color: #ffffff;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-  }
-
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-
+    
   .errorMsg {
     color: #ff4d4f;
     font-size: 13px;

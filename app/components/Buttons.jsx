@@ -2,9 +2,12 @@ import { MoonSvg, SunSvg } from "./Svgs"
 
 export const SignInButton = ({ isLoading, text }) => {
     return (
-        <button className="buttonSubmit" disabled={isLoading}>
+        <button
+            className="mt-5 mb-2.5 w-full h-12.5 rounded-[10px] bg-[#151717] text-white text-[15px] font-semibold cursor-pointer shadow-[0_5px_15px_rgba(0,0,0,0.2),inset_0_2px_0_rgba(255,255,255,0.1)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#2a2c2c] hover:shadow-[0_8px_20px_rgba(0,0,0,0.25),inset_0_2px_0_rgba(255,255,255,0.1)] active:translate-y-px active:shadow-[0_2px_5px_rgba(0,0,0,0.2)] disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none dark:bg-[#4da3ff] dark:text-[#121212] dark:shadow-[0_5px_15px_rgba(0,0,0,0.4),inset_0_2px_0_rgba(255,255,255,0.2)] dark:hover:bg-[#3b8ce0] dark:hover:shadow-[0_8px_20px_rgba(0,0,0,0.5),inset_0_2px_0_rgba(255,255,255,0.2)]"
+            disabled={isLoading}
+        >
             {isLoading ? (
-                <span className="spinner" />
+                <span className="inline-block w-5 h-5 border-[3px] border-white/40 border-t-white rounded-full animate-[spin_0.7s_linear_infinite]" />
             ) : (
                 text
             )}
@@ -16,7 +19,7 @@ export const DarkModeButton = ({ isDarkMode, setIsDarkMode }) => {
     return (
         <button
             type="button"
-            className="themeToggle"
+            className="flex items-center justify-center p-2 rounded-full bg-transparent border-none cursor-pointer text-[#151717] transition-colors duration-200 hover:bg-[#eee] dark:text-[#e0e0e0] dark:hover:bg-[#333]"
             onClick={() => setIsDarkMode(!isDarkMode)}
         >
             {isDarkMode ? <SunSvg /> : <MoonSvg />}
