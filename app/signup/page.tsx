@@ -74,7 +74,7 @@ export default function Signup() {
                     <div className="inputForm">
                         <UsernameSvg />
                         <input name="username" value={userdata.username} onChange={handleChange}
-                            placeholder="Enter your Username" className="input" type="text" required />
+                            placeholder="Enter your Username" className="input" type="text" minLength={4} maxLength={20} required />
                     </div>
                     {usernameError && <div className="errorMsg">{usernameError}</div>}
 
@@ -93,7 +93,7 @@ export default function Signup() {
                     </div>
                     <div className="inputForm">
                         <PasswordSvg />
-                        <input name="password" value={userdata.password} onChange={handleChange}
+                        <input name="password" value={userdata.password} onChange={handleChange} minLength={8}
                             placeholder="Enter your Password" className="input" type={showPassword ? "text" : "password"} required />
                         <ShowPasswordButton showPassword={showPassword} setShowPassword={setShowPassword} />
                     </div>

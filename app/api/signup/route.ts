@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
         const verificationToken = crypto.randomUUID()
         const verificationTokenExpiry = new Date(Date.now() + 10 * 60 * 1000)
 
-        const user = await User.create({
+        await User.create({
             email,
             username,
             password: hashedPassword,
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
         console.log('user added to DB: ', username)
 
         // Send the verification email
-        const baseUrl = process.env.NEXTAUTH_URL?.replace(/\/login$/, "") ?? "http://localhost:3000"
+        const baseUrl = process.env.NEXTAUTH_URL
         const verificationUrl = `${baseUrl}/verify-email?token=${verificationToken}`
 
         await sendVerificationEmail({ email, verificationUrl, username })
@@ -40,4 +40,4 @@ export async function POST(req: NextRequest) {
         console.log("error", error)
         return NextResponse.json({ message: "An error occured while registering the user" }, { status: 500 })
     }
-}
+}
