@@ -25,15 +25,15 @@ app/api/
 │           │   ├── Looks up user by email OR username (User.findOne)
 │           │   └── Validates password with bcrypt.compare()
 │           │
+│           ├── CALLBACK: signIn ✅ (Email Verification Guard)
+│           │   └── Returns false if user.isVerified === false (blocks login)
+│           │       Legacy users (isVerified === undefined) are allowed through
+│           │
 │           ├── EXPORTS: authOptions (NextAuthOptions), handler as GET & POST
 │           │
 │           └── 🔮 FUTURE INSERTION POINTS
 │               ├── [OAuth Providers] → Add GitHub/Google inside providers: []
 │               │     e.g. import GithubProvider from "next-auth/providers/github"
-│               │
-│               ├── [Email Verification] → Add signIn() callback
-│               │     Check user.isVerified before returning session
-│               │     e.g. callbacks: { signIn: async ({ user }) => user.isVerified }
 │               │
 │               ├── [JWT / Session Customization] → Add jwt() + session() callbacks
 │               │     Attach role, id, or extra fields to the token/session
@@ -70,23 +70,37 @@ app/api/
 │       ├── Hashes password via encrypt() → bcrypt.hash(password, 10)
 │       ├── Connects to MongoDB via connectMongoDB()
 │       ├── Creates new User document via User.create()
-│       └── RETURNS: 201 { message: "User Registered" }
+│       ├── Generates crypto.randomUUID() verification token (expires in 10 min)
+│       ├── Saves token + expiry to user document
+│       ├── Sends verification email via sendVerificationEmail()
+│       └── RETURNS: 201 { message: "User Registered. Please check your email..." }
 │                 or 500 { message: "An error occured while registering the user" }
 │
 │       └── 🔮 FUTURE INSERTION POINTS
-│           ├── [Email Verification on Signup]
-│           │     After User.create(), generate a verification token
-│           │     Send email via nodemailer / Resend / SendGrid
-│           │     New route needed: POST /api/verifyEmail?token=...
-│           │
 │           ├── [Input Validation]
 │           │     Add zod/yup schema validation before creating the user
 │           │
 │           ├── [Welcome Email]
-│           │     Trigger a transactional email after successful registration
+│           │     Trigger a transactional email after verification completes
 │           │
 │           └── [Role Assignment]
 │                 Assign default role (e.g. "user") on User.create()
+│
+│
+├── 📁 verifyEmail/ ✅ (NEW)
+│   └── 📄 route.ts                              ← GET /api/verifyEmail?token=...
+│       │
+│       ├── INPUT (query param): token
+│       ├── Connects to MongoDB via connectMongoDB()
+│       ├── Looks up user by verificationToken where verificationTokenExpiry > now
+│       ├── Sets isVerified: true, clears verificationToken + verificationTokenExpiry
+│       ├── Saves updated user document
+│       └── REDIRECTS to /login?verified=true on success
+│           or RETURNS 400 { message: "Invalid or expired verification token." }
+│
+│       └── 🔮 FUTURE INSERTION POINTS
+│           └── [Resend Verification Email]
+│                 POST /api/verifyEmail/resend → generate new token + resend email
 │
 │
 └── 📁 login/                                    ← ⚠️ Empty (placeholder folder)
@@ -107,14 +121,23 @@ app/api/
 
 ```
 lib/
-└── mongodb.ts          → connectMongoDB()
-    └── mongoose.connect(process.env.MONGO_URL)
-        Used by: ALL three active routes
+├── mongodb.ts              → connectMongoDB()
+│   └── mongoose.connect(process.env.MONGO_URL)
+│       Used by: ALL active routes
+│
+└── sendVerificationEmail.ts ✅ (NEW)
+    → sendVerificationEmail({ email, verificationUrl, username })
+    → Nodemailer + Gmail SMTP (EMAIL_USER / EMAIL_PASS env vars)
+       Used by: signup/route.ts
 
 models/
 └── user.ts             → Mongoose User schema
-    Fields: username (String), email (String), password (String), timestamps
-    Used by: auth/[...nextauth], checkUserExists, signup
+    Fields: username, email, password,
+            isVerified (Boolean, default: false) ✅,
+            verificationToken (String) ✅,
+            verificationTokenExpiry (Date) ✅,
+            timestamps
+    Used by: auth/[...nextauth], checkUserExists, signup, verifyEmail
 
 app/scripts/
 ├── encrypt.ts          → encrypt(data: string) → bcrypt.hash(data, 10)
@@ -130,13 +153,14 @@ app/scripts/
 
 | Feature                    | Where to Add                                                         |
 |----------------------------|----------------------------------------------------------------------|
-| Email Verification         | `signup/route.ts` (send token) + new `api/verifyEmail/route.ts`      |
-| Forgot / Reset Password    | New `api/login/forgotPassword/route.ts` + `resetPassword/route.ts`   |
-| OAuth (Google / GitHub)    | `auth/[...nextauth]/route.ts` inside `providers: []`                 |
-| JWT Role / Claims          | `auth/[...nextauth]/route.ts` `callbacks.jwt` + `callbacks.session`  |
-| MFA / 2FA                  | `auth/[...nextauth]/route.ts` inside `authorize()`                   |
-| Rate Limiting              | Middleware (`middleware.ts`) or wrapper around `authorize()`          |
-| Audit / Login Logs         | New `api/login/log/route.ts` or inside NextAuth `events.signIn`      |
-| Phone Number Auth          | `models/user.ts` (add field) + `checkUserExists/route.ts` + signup   |
-| Input Validation (Zod)     | `signup/route.ts` + `checkUserExists/route.ts` before DB calls        |
-| Refresh Token Rotation     | `auth/[...nextauth]/route.ts` `callbacks.jwt` block                  |
+| ~~Email Verification~~     | ✅ **Implemented** — `signup/route.ts` + `api/verifyEmail/route.ts`  |
+| Resend Verification Email  | New `api/verifyEmail/resend/route.ts`                                |
+| Forgot / Reset Password    | New `api/login/forgotPassword/route.ts` + `resetPassword/route.ts`  |
+| OAuth (Google / GitHub)    | `auth/[...nextauth]/route.ts` inside `providers: []`                |
+| JWT Role / Claims          | `auth/[...nextauth]/route.ts` `callbacks.jwt` + `callbacks.session` |
+| MFA / 2FA                  | `auth/[...nextauth]/route.ts` inside `authorize()`                  |
+| Rate Limiting              | Middleware (`middleware.ts`) or wrapper around `authorize()`         |
+| Audit / Login Logs         | New `api/login/log/route.ts` or inside NextAuth `events.signIn`     |
+| Phone Number Auth          | `models/user.ts` (add field) + `checkUserExists/route.ts` + signup  |
+| Input Validation (Zod)     | `signup/route.ts` + `checkUserExists/route.ts` before DB calls       |
+| Refresh Token Rotation     | `auth/[...nextauth]/route.ts` `callbacks.jwt` block                 |
