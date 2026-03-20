@@ -6,10 +6,12 @@ import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg } from '../components/Svgs'
 import { StyledWrapper } from '../styles/LoginCSS'
 import { validateEmail } from '@/lib/validation'
 import Link from 'next/link'
-import { signIn } from 'next-auth/react'
+import { signIn, getSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { DarkModeButton, ShowPasswordButton, SignInButton } from '../components/Buttons'
 
 export default function Login() {
+  const router = useRouter();
   const [isDarkMode, setIsDarkMode] = useDarkMode(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -36,7 +38,14 @@ export default function Login() {
         console.log("Login error:", res.error);
         setError("Invalid username/email or password");
       } else {
-        console.log("Login successful:", res);
+        // Fetch updated session to get username for redirect
+        const session = await getSession();
+        const username = (session?.user as Record<string, unknown>)?.username as string;
+        if (username) {
+          router.push(`/profile/${username}`);
+        } else {
+          router.push('/');
+        }
       }
     } catch (error) {
       console.log("Login exception:", error);

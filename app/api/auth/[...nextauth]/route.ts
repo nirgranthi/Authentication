@@ -1,4 +1,5 @@
-import NextAuth, { NextAuthOptions } from "next-auth"
+import NextAuth, { NextAuthOptions, Session } from "next-auth"
+import { JWT } from "next-auth/jwt"
 import CredentialsProvider from "next-auth/providers/credentials"
 import User from "@/models/user"
 import bcrypt from "bcryptjs"
@@ -57,8 +58,27 @@ export const authOptions: NextAuthOptions = {
             }
 
             return true
+        },
+        async jwt({ token, user }) {
+            if (user) {
+                const dbUser = user as { username?: string; email?: string; isVerified?: boolean; createdAt?: Date }
+                token.username = dbUser.username
+                token.email = dbUser.email
+                token.isVerified = dbUser.isVerified
+                token.createdAt = dbUser.createdAt
+            }
+            return token
+        },
+        async session({ session, token }: { session: Session; token: JWT }) {
+            if (session.user) {
+                (session.user as Record<string, unknown>).username = token.username
+                ;(session.user as Record<string, unknown>).isVerified = token.isVerified
+                ;(session.user as Record<string, unknown>).createdAt = token.createdAt
+            }
+            return session
         }
-    }
+    },
+    session: { strategy: "jwt" }
 }
 
 const handler = NextAuth(authOptions)
