@@ -43,9 +43,23 @@ export const authOptions: NextAuthOptions = {
                 }
             }
         })
-    ]
+    ],
+    callbacks: {
+        async signIn({ user }) {
+            // user here is the Mongoose document returned from authorize()
+            const dbUser = user as { isVerified?: boolean }
+
+            // Block login if isVerified is explicitly false (new users who haven't verified yet).
+            // Legacy users without the field (isVerified === undefined) are allowed through.
+            if (dbUser.isVerified === false) {
+                return false
+            }
+
+            return true
+        }
+    }
 }
 
 const handler = NextAuth(authOptions)
 
-export { handler as GET, handler as POST }
+export { handler as GET, handler as POST }
