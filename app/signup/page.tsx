@@ -8,12 +8,14 @@ import Link from 'next/link';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { DarkModeButton, ShowPasswordButton, SignInButton } from '../components/Buttons'
+import { validateUsername, validatePassword } from '@/lib/validation'
 
 export default function Signup() {
     const [isDarkMode, setIsDarkMode] = useDarkMode(false);
     const [showPassword, setShowPassword] = useState(false);
     const [emailError, setEmailError] = useState('');
     const [usernameError, setUsernameError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter()
 
@@ -28,11 +30,26 @@ export default function Signup() {
         setUserdata(prev => ({ ...prev, [name]: value }));
         if (name === 'email') setEmailError('');
         if (name === 'username') setUsernameError('');
+        if (name === 'password') setPasswordError('');
     };
 
     const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log(userdata);
+
+        // --- Client-side validation ---
+        const usernameValidation = validateUsername(userdata.username);
+        if (!usernameValidation.valid) {
+            setUsernameError(usernameValidation.error);
+            return;
+        }
+
+        const passwordValidation = validatePassword(userdata.password);
+        if (!passwordValidation.valid) {
+            setPasswordError(passwordValidation.error);
+            return;
+        }
+
         setIsLoading(true);
 
         try {
@@ -97,6 +114,7 @@ export default function Signup() {
                             placeholder="Enter your Password" className="input" type={showPassword ? "text" : "password"} required />
                         <ShowPasswordButton showPassword={showPassword} setShowPassword={setShowPassword} />
                     </div>
+                    {passwordError && <div className="errorMsg">{passwordError}</div>}
 
                     <div className="flexRow">
                         <label className="rememberMe">

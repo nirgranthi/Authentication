@@ -4,10 +4,22 @@ import { NextResponse, NextRequest } from "next/server"
 import { encrypt } from "@/app/scripts/encrypt"
 import { sendVerificationEmail } from "@/lib/sendVerificationEmail"
 import crypto from "crypto"
+import { validateUsername, validatePassword } from "@/lib/validation"
 
 export async function POST(req: NextRequest) {
     try {
         const { email, username, password } = await req.json()
+
+        // --- Server-side validation ---
+        const usernameValidation = validateUsername(username)
+        if (!usernameValidation.valid) {
+            return NextResponse.json({ message: usernameValidation.error }, { status: 400 })
+        }
+
+        const passwordValidation = validatePassword(password)
+        if (!passwordValidation.valid) {
+            return NextResponse.json({ message: passwordValidation.error }, { status: 400 })
+        }
 
         const hashedPassword = await encrypt(password)
 
