@@ -4,6 +4,19 @@ export interface ValidationResult {
 }
 
 /**
+ * Validates that a string is a properly formatted email address.
+ */
+export function validateEmail(email: string): ValidationResult {
+    if (!email || email.trim().length === 0) {
+        return { valid: false, error: "Email is required." };
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return { valid: false, error: "Please enter a valid email address." };
+    }
+    return { valid: true, error: "" };
+}
+
+/**
  * Validates that a username contains only English letters (a-z, A-Z)
  * and is between 4 and 20 characters long.
  */

@@ -4,7 +4,7 @@ import { ChangeEvent, SubmitEvent, useState } from 'react'
 import { useDarkMode } from '../hooks/useDarkMode'
 import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg } from '../components/Svgs'
 import { StyledWrapper } from '../styles/LoginCSS'
-import { isEmail } from '../scripts/isEmail'
+import { validateEmail } from '@/lib/validation'
 import Link from 'next/link'
 import { signIn } from 'next-auth/react'
 import { DarkModeButton, ShowPasswordButton, SignInButton } from '../components/Buttons'
@@ -48,7 +48,7 @@ export default function Login() {
   const handleIdentifierChange = (e: ChangeEvent<HTMLInputElement>) => {
     setError('');
     const value = e.target.value
-    if (isEmail(value)) {
+    if (validateEmail(value).valid) {
       setUserdata({ ...userdata, email: value, username: '' });
     } else {
       setUserdata({ ...userdata, username: value, email: '' });
@@ -69,7 +69,7 @@ export default function Login() {
           </div>
           <div className="inputForm">
             <EmailSvg />
-            <input placeholder="Enter your Email/Username" className="input" type="text" required
+            <input placeholder="Enter your Email/Username" className="input" type="text" minLength={4} required
               value={userdata.email || userdata.username} onChange={handleIdentifierChange} />
           </div>
 
@@ -78,7 +78,7 @@ export default function Login() {
           </div>
           <div className="inputForm">
             <PasswordSvg />
-            <input placeholder="Enter your Password" className="input" type={showPassword ? "text" : "password"} required
+            <input placeholder="Enter your Password" className="input" type={showPassword ? "text" : "password"} minLength={8} required
               value={userdata.password} onChange={(e) => { setError(''); setUserdata({ ...userdata, password: e.target.value }); }} />
             <ShowPasswordButton showPassword={showPassword} setShowPassword={setShowPassword} />
           </div>

@@ -8,7 +8,7 @@ import Link from 'next/link';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { DarkModeButton, ShowPasswordButton, SignInButton } from '../components/Buttons'
-import { validateUsername, validatePassword } from '@/lib/validation'
+import { validateUsername, validatePassword, validateEmail } from '@/lib/validation'
 
 export default function Signup() {
     const [isDarkMode, setIsDarkMode] = useDarkMode(false);
@@ -37,7 +37,12 @@ export default function Signup() {
         e.preventDefault();
         console.log(userdata);
 
-        // --- Client-side validation ---
+        const emailValidation = validateEmail(userdata.email);
+        if (!emailValidation.valid) {
+            setEmailError(emailValidation.error);
+            return;
+        }
+
         const usernameValidation = validateUsername(userdata.username);
         if (!usernameValidation.valid) {
             setUsernameError(usernameValidation.error);

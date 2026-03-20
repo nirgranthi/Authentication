@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import User from "@/models/user"
 import bcrypt from "bcryptjs"
 import { connectMongoDB } from "@/lib/mongodb"
+import { validateEmail, validateUsername } from "@/lib/validation"
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -16,16 +17,16 @@ export const authOptions: NextAuthOptions = {
             async authorize(credentials) {
                 if (!credentials) return null;
                 const {email, username, password} = credentials
+
+                // Validate the identifier before connecting to DB
+                const isValidEmail = validateEmail(email).valid;
+                const isValidUsername = validateUsername(username).valid;
+                if (!isValidEmail && !isValidUsername) return null;
+
+                if (!password) return null;
+
                 try {
                     await connectMongoDB()
-
-                    if (!email && !username) {
-                        return null
-                    }
-
-                    if (!password) {
-                        return null
-                    }
 
                     let user;
                     if (email) {
