@@ -115,10 +115,11 @@ export default function Login() {
 
           <div className="flexRow">
             <label className="rememberMe">
-              <input 
-                type="checkbox" 
-                checked={rememberMe} 
-                onChange={(e) => setRememberMe(e.target.checked)} 
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                defaultChecked
               />
               <span>Remember me</span>
             </label>

@@ -31,9 +31,9 @@ export const authOptions: NextAuthOptions = {
 
                     let user;
                     if (email) {
-                        user = await User.findOne({ email: email });
+                        user = await User.findOne({ email: email.toLowerCase() });
                     } else if (username) {
-                        user = await User.findOne({ username: username });
+                        user = await User.findOne({ username: username.toLowerCase() });
                     }
 
                     if (user && await bcrypt.compare(password, user.password)) {

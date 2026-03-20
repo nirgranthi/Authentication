@@ -61,21 +61,33 @@ export default function Signup() {
             const checkResponse = await axios.post("/api/checkUserExists", JSON.stringify({ email: userdata.email, username: userdata.username }))
             if (checkResponse.data.email) {
                 setEmailError("Email is already in use");
+                setIsLoading(false);
                 return
             }
             if (checkResponse.data.username) {
                 setUsernameError("Username is already in use");
+                setIsLoading(false);
                 return
             }
             const res = await axios.post("/api/signup", JSON.stringify(userdata))
             console.log(res)
             if (res.status === 201) {
-                const form = e.target;
+                const form = e.target as HTMLFormElement;
                 form.reset()
                 router.push("/login")
             } else { console.log("User registration failed") }
-        } catch (error) {
+        } catch (error: any) {
             console.log(error)
+            if (error.response && error.response.status === 409) {
+                const message = error.response.data.message;
+                if (message.toLowerCase().includes('email')) {
+                    setEmailError(message);
+                } else if (message.toLowerCase().includes('username')) {
+                    setUsernameError(message);
+                }
+            } else {
+                console.error("Signup error:", error);
+            }
         } finally {
             setIsLoading(false);
         }
@@ -120,13 +132,6 @@ export default function Signup() {
                         <ShowPasswordButton showPassword={showPassword} setShowPassword={setShowPassword} />
                     </div>
                     {passwordError && <div className="errorMsg">{passwordError}</div>}
-
-                    <div className="flexRow">
-                        <label className="rememberMe">
-                            <input type="checkbox" defaultChecked />
-                            <span>Remember me</span>
-                        </label>
-                    </div>
 
                     <SignInButton isLoading={isLoading} text="Sign Up" />
 

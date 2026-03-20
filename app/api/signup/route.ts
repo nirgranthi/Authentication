@@ -22,16 +22,30 @@ export async function POST(req: NextRequest) {
         }
 
         const hashedPassword = await encrypt(password)
+        const normalizedEmail = email.toLowerCase()
+        const normalizedUsername = username.toLowerCase()
 
         await connectMongoDB()
+
+        // Check if user already exists (backend safety check)
+        const existingEmail = await User.findOne({ email: normalizedEmail }).select("_id")
+        if (existingEmail) {
+            return NextResponse.json({ message: "Email is already in use" }, { status: 409 })
+        }
+
+        const existingUsername = await User.findOne({ username: normalizedUsername }).select("_id")
+        if (existingUsername) {
+            return NextResponse.json({ message: "Username is already in use" }, { status: 409 })
+        }
+
 
         // Generate a verification token that expires in 10 minutes
         const verificationToken = crypto.randomUUID()
         const verificationTokenExpiry = new Date(Date.now() + 10 * 60 * 1000)
 
         await User.create({
-            email,
-            username,
+            email: normalizedEmail,
+            username: normalizedUsername,
             password: hashedPassword,
             verificationToken,
             verificationTokenExpiry,

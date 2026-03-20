@@ -49,7 +49,7 @@ export default function ProfilePage() {
 
   // If the URL username doesn't match the logged-in user, redirect to their own profile
   useEffect(() => {
-    if (status === 'authenticated' && user?.username && urlUsername !== user.username) {
+    if (status === 'authenticated' && user?.username && urlUsername.toLowerCase() !== user.username.toLowerCase()) {
       router.replace(`/profile/${user.username}`)
     }
   }, [status, user?.username, urlUsername, router])
