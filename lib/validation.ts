@@ -17,7 +17,7 @@ export function validateEmail(email: string): ValidationResult {
 }
 
 /**
- * Validates that a username contains only English letters (a-z, A-Z)
+ * Validates that a username contains only English letters (a-z, A-Z), numbers (0-9), underscores (_), and periods (.)
  * and is between 4 and 20 characters long.
  */
 export function validateUsername(username: string): ValidationResult {
@@ -27,8 +27,8 @@ export function validateUsername(username: string): ValidationResult {
     if (username.length < 4 || username.length > 20) {
         return { valid: false, error: "Username must be between 4 and 20 characters." };
     }
-    if (!/^[a-zA-Z]+$/.test(username)) {
-        return { valid: false, error: "Username may only contain English letters (a–z, A–Z)." };
+    if (!/^[a-zA-Z0-9_.]+$/.test(username)) {
+        return { valid: false, error: "Username may only contain letters, numbers, underscores, and periods." };
     }
     return { valid: true, error: "" };
 }
