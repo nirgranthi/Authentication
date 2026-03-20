@@ -2,7 +2,7 @@
 
 import { useState, ChangeEvent, SubmitEvent } from 'react'
 import { useDarkMode } from '../hooks/useDarkMode'
-import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, UsernameSvg } from '../components/Svgs'
+import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, UsernameSvg } from '../components/SVGs'
 import { StyledWrapper } from '../styles/LoginCSS'
 import Link from 'next/link';
 import axios from 'axios';

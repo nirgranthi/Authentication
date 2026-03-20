@@ -1,8 +1,8 @@
 'use client'
 
-import { ChangeEvent, SubmitEvent, useState } from 'react'
+import { ChangeEvent, SubmitEvent, useEffect, useState } from 'react'
 import { useDarkMode } from '../hooks/useDarkMode'
-import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg } from '../components/Svgs'
+import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg } from '../components/SVGs'
 import { StyledWrapper } from '../styles/LoginCSS'
 import { validateEmail } from '@/lib/validation'
 import Link from 'next/link'
@@ -22,11 +22,32 @@ export default function Login() {
     email: '',
     password: ''
   })
+  const [rememberMe, setRememberMe] = useState(false);
+
+  // Load remembered user
+  useEffect(() => {
+    const rememberedUser = localStorage.getItem('rememberedUser');
+    if (rememberedUser) {
+      if (validateEmail(rememberedUser).valid) {
+        setUserdata(prev => ({ ...prev, email: rememberedUser, username: '' }));
+      } else {
+        setUserdata(prev => ({ ...prev, username: rememberedUser, email: '' }));
+      }
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     try {
+      const identifier = userdata.email || userdata.username;
+      if (rememberMe) {
+        localStorage.setItem('rememberedUser', identifier);
+      } else {
+        localStorage.removeItem('rememberedUser');
+      }
+
       const res = await signIn("credentials", {
         email: userdata.email,
         username: userdata.username,
@@ -68,7 +89,7 @@ export default function Login() {
     <StyledWrapper className={isDarkMode ? 'dark-mode' : ''}>
       <div className="wrapper">
         <form className="form" onSubmit={handleSubmit}>
-          <div className="flexRow" style={{ marginBottom: '10px' }}>
+          <div className="flexRow mb-[10px]">
             <h2>Sign In</h2>
             <DarkModeButton isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
           </div>
@@ -94,7 +115,11 @@ export default function Login() {
 
           <div className="flexRow">
             <label className="rememberMe">
-              <input type="checkbox" defaultChecked />
+              <input 
+                type="checkbox" 
+                checked={rememberMe} 
+                onChange={(e) => setRememberMe(e.target.checked)} 
+              />
               <span>Remember me</span>
             </label>
             <span className="span">Forgot password?</span>

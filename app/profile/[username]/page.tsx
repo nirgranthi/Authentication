@@ -6,6 +6,7 @@ import { useEffect } from 'react'
 import { useDarkMode } from '../../hooks/useDarkMode'
 import { DarkModeButton } from '../../components/Buttons'
 import { PageWrapper, Card } from '../../styles/ProfileCSS'
+import { LogoutSvg } from '../../components/SVGs'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -60,7 +61,7 @@ export default function ProfilePage() {
   if (status === 'loading') {
     return (
       <PageWrapper className={isDarkMode ? 'dark-mode' : ''}>
-        <span style={{ fontSize: 14, opacity: 0.6 }}>Loading…</span>
+        <span className="text-[14px] opacity-60">Loading…</span>
       </PageWrapper>
     )
   }
@@ -69,66 +70,42 @@ export default function ProfilePage() {
 
   return (
     <PageWrapper className={isDarkMode ? 'dark-mode' : ''}>
-      <div style={{ padding: '2rem' }}>
+      <div className="p-8">
         <Card className="card">
           {/* ── Header ── */}
-          <div style={{
-            background: 'linear-gradient(135deg, #2d79f3 0%, #1a56c4 100%)',
-            padding: '28px 28px 60px',
-            position: 'relative',
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <div className="bg-gradient-to-br from-[#2d79f3] to-[#1a56c4] px-7 pt-7 pb-[60px] relative">
+            <div className="flex justify-end">
               <DarkModeButton isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
             </div>
           </div>
 
           {/* ── Avatar ── */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-44px', marginBottom: '8px' }}>
+          <div className="flex justify-center -mt-11 mb-2">
             <div
-              className="avatar"
-              style={{
-                width: 88,
-                height: 88,
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, #2d79f3, #1a56c4)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 28,
-                fontWeight: 700,
-                color: '#fff',
-                border: '4px solid white',
-                boxShadow: '0 4px 16px rgba(45,121,243,0.3)',
-                userSelect: 'none',
-              }}
+              className="avatar w-[88px] h-[88px] rounded-full bg-gradient-to-br from-[#2d79f3] to-[#1a56c4] flex items-center justify-center text-3xl font-bold text-white border-4 border-white shadow-[0_4px_16px_rgba(45,121,243,0.3)] select-none"
             >
               {getInitials(user?.username || user?.name || '?')}
             </div>
           </div>
 
           {/* ── Name & badge ── */}
-          <div style={{ textAlign: 'center', padding: '0 28px 4px' }}>
-            <h1 style={{ fontSize: 22, fontWeight: 700, margin: '0 0 6px' }}>
+          <div className="text-center px-7 pb-1">
+            <h1 className="text-[22px] font-bold mb-1.5">
               @{user?.username || urlUsername}
             </h1>
             <span
-              className={user?.isVerified ? 'badge-verified' : 'badge-unverified'}
-              style={{
-                display: 'inline-block',
-                fontSize: 12,
-                fontWeight: 600,
-                borderRadius: 20,
-                padding: '3px 12px',
-                background: user?.isVerified ? 'rgba(45,121,243,0.1)' : 'rgba(255,77,79,0.1)',
-                color: user?.isVerified ? '#2d79f3' : '#ff4d4f',
-              }}
+              className={`inline-block text-xs font-semibold rounded-[20px] px-3 py-[3px] ${
+                user?.isVerified 
+                  ? 'bg-[#2d79f3]/10 text-[#2d79f3]' 
+                  : 'bg-[#ff4d4f]/10 text-[#ff4d4f]'
+              }`}
             >
               {user?.isVerified ? '✓ Verified' : '✗ Not Verified'}
             </span>
           </div>
 
           {/* ── Info rows ── */}
-          <div style={{ padding: '20px 28px' }}>
+          <div className="px-7 py-5">
             {[
               { label: 'Username', value: user?.username || '—' },
               { label: 'Email', value: user?.email || '—' },
@@ -136,28 +113,13 @@ export default function ProfilePage() {
             ].map(({ label, value }) => (
               <div
                 key={label}
-                className="info-row"
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '12px 0',
-                  borderBottom: '1px solid #f0f0f0',
-                }}
+                className="info-row flex justify-between items-center py-3 border-b border-[#f0f0f0]"
               >
-                <span className="info-label" style={{ fontSize: 13, color: '#888', fontWeight: 500 }}>
+                <span className="info-label text-[13px] text-[#888] font-medium">
                   {label}
                 </span>
                 <span
-                  className="info-value"
-                  style={{
-                    fontSize: 14,
-                    fontWeight: 600,
-                    color: '#151717',
-                    maxWidth: '60%',
-                    textAlign: 'right',
-                    wordBreak: 'break-all',
-                  }}
+                  className="info-value text-sm font-semibold text-[#151717] max-w-[60%] text-right break-all"
                 >
                   {value}
                 </span>
@@ -166,32 +128,12 @@ export default function ProfilePage() {
           </div>
 
           {/* ── Logout button ── */}
-          <div style={{ padding: '4px 28px 28px' }}>
+          <div className="px-7 pt-1 pb-7">
             <button
-              className="logout-btn"
+              className="logout-btn w-full h-12 rounded-[10px] border-[1.5px] border-[#ff4d4f]/25 bg-transparent text-[#ff4d4f] text-[15px] font-semibold cursor-pointer transition-all duration-200 flex items-center justify-center gap-2 hover:bg-[#ff4d4f]/5"
               onClick={handleLogout}
-              style={{
-                width: '100%',
-                height: 48,
-                borderRadius: 10,
-                border: '1.5px solid #ff4d4f44',
-                background: 'transparent',
-                color: '#ff4d4f',
-                fontSize: 15,
-                fontWeight: 600,
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 8,
-              }}
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <polyline points="16 17 21 12 16 7" />
-                <line x1="21" y1="12" x2="9" y2="12" />
-              </svg>
+              <LogoutSvg />
               Sign Out
             </button>
           </div>
