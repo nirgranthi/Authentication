@@ -46,12 +46,18 @@ export const authOptions: NextAuthOptions = {
                         user = await User.findOne({ username: username.toLowerCase() });
                     }
 
-                    if (user && await bcrypt.compare(password, user.password)) {
-                        return user
+                    if (user) {
+                        if (!user.password) {
+                            throw new Error("This email is registered with a social provider. Please sign in with Google or Apple.");
+                        }
+                        if (await bcrypt.compare(password, user.password)) {
+                            return user;
+                        }
                     }
-                    return null
-                } catch (error) {
-                    console.log(error)
+                    return null;
+                } catch (error: any) {
+                    console.error("Authorize error:", error.message || error);
+                    throw new Error(error.message || "Failed to authenticate");
                 }
             }
         })
@@ -128,7 +134,10 @@ export const authOptions: NextAuthOptions = {
             return session
         }
     },
-    session: { strategy: "jwt" }
+    session: { strategy: "jwt" },
+    pages: {
+        signIn: "/login",
+    }
 }
 
 const handler = NextAuth(authOptions)

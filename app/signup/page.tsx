@@ -1,17 +1,25 @@
 'use client'
 
-import { useState, ChangeEvent, SubmitEvent, useEffect } from 'react'
+import { useState, ChangeEvent, SubmitEvent, useEffect, Suspense } from 'react'
 import { useDarkMode } from '../hooks/useDarkMode'
 import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, UsernameSvg } from '../components/SVGs'
 import { StyledWrapper } from '../styles/LoginCSS'
 import Link from 'next/link';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { DarkModeButton, ShowPasswordButton, SignInButton } from '../components/Buttons'
 import { validateUsername, validatePassword, validateEmail } from '@/lib/validation'
 import { useSession, signIn } from 'next-auth/react'
 
 export default function Signup() {
+    return (
+        <Suspense fallback={<div className="flex h-screen w-full items-center justify-center">Loading...</div>}>
+            <SignupContent />
+        </Suspense>
+    )
+}
+
+function SignupContent() {
     const [isDarkMode, setIsDarkMode] = useDarkMode(false);
     const [showPassword, setShowPassword] = useState(false);
     const [emailError, setEmailError] = useState('');
@@ -20,6 +28,20 @@ export default function Signup() {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter()
     const { data: session, status } = useSession();
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        const errorParam = searchParams.get('error');
+        if (errorParam) {
+            if (errorParam === 'OAuthSignin' || errorParam === 'OAuthCallback' || errorParam === 'OAuthCreateAccount') {
+               setEmailError("An error occurred during social authentication.");
+            } else if (errorParam === 'AccessDenied') {
+               setEmailError("Access denied. Please try again.");
+            } else {
+               setEmailError(errorParam);
+            }
+        }
+    }, [searchParams]);
 
     useEffect(() => {
         if (status === 'authenticated') {

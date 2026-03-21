@@ -1,24 +1,48 @@
 'use client'
 
-import { ChangeEvent, SubmitEvent, useState, useEffect } from 'react'
+import { ChangeEvent, SubmitEvent, useState, useEffect, Suspense } from 'react'
 import { useDarkMode } from '../hooks/useDarkMode'
 import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg } from '../components/SVGs'
 import { StyledWrapper } from '../styles/LoginCSS'
 import { validateEmail } from '@/lib/validation'
 import Link from 'next/link'
 import { signIn, getSession, useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { DarkModeButton, ShowPasswordButton, SignInButton } from '../components/Buttons'
 import { userdataProps } from '../components/types'
 import { useRememberMe } from '../hooks/useRememberMe'
 
 export default function Login() {
+  return (
+    <Suspense fallback={<div className="flex h-screen w-full items-center justify-center">Loading...</div>}>
+      <LoginContent />
+    </Suspense>
+  )
+}
+
+function LoginContent() {
   const router = useRouter();
   const [isDarkMode, setIsDarkMode] = useDarkMode(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { data: session, status } = useSession();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const errorParam = searchParams.get('error');
+    if (errorParam) {
+      if (errorParam === 'OAuthSignin' || errorParam === 'OAuthCallback' || errorParam === 'OAuthCreateAccount') {
+         setError("An error occurred during social authentication.");
+      } else if (errorParam === 'AccessDenied') {
+         setError("Access denied. Please try again.");
+      } else if (errorParam === 'CredentialsSignin') {
+         setError("Invalid username/email or password.");
+      } else {
+         setError(errorParam);
+      }
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (status === 'authenticated') {
