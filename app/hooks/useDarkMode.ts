@@ -1,7 +1,8 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from 'react';
 
 export function useDarkMode(initialValue = false) {
-  const [isDarkMode, setIsDarkMode] = useState(initialValue);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(initialValue);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.matchMedia) {

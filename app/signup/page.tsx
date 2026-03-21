@@ -35,7 +35,6 @@ export default function Signup() {
 
     const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(userdata);
 
         const emailValidation = validateEmail(userdata.email);
         if (!emailValidation.valid) {
@@ -76,17 +75,22 @@ export default function Signup() {
                 form.reset()
                 router.push("/login")
             } else { console.log("User registration failed") }
-        } catch (error: any) {
+        } catch (error) {
             console.log(error)
-            if (error.response && error.response.status === 409) {
-                const message = error.response.data.message;
-                if (message.toLowerCase().includes('email')) {
-                    setEmailError(message);
-                } else if (message.toLowerCase().includes('username')) {
-                    setUsernameError(message);
+            if (axios.isAxiosError(error)) {
+                if (error.response && error.response.status === 409) {
+                    const message = error.response.data.message;
+                    if (message.toLowerCase().includes('email')) {
+                        setEmailError(message);
+                    } else if (message.toLowerCase().includes('username')) {
+                        setUsernameError(message);
+                    }
+                } else {
+                    console.error("Signup error:", error);
                 }
-            } else {
-                console.error("Signup error:", error);
+            }
+            else {
+                console.error("Unexpected error:", error);
             }
         } finally {
             setIsLoading(false);
