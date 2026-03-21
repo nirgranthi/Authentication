@@ -51,8 +51,7 @@ export const authOptions: NextAuthOptions = {
             // user here is the Mongoose document returned from authorize()
             const dbUser = user as { isVerified?: boolean }
 
-            // Block login if isVerified is explicitly false (new users who haven't verified yet).
-            // Legacy users without the field (isVerified === undefined) are allowed through.
+            // Block login if isVerified is explicitly false
             if (dbUser.isVerified === false) {
                 return false
             }
@@ -61,9 +60,11 @@ export const authOptions: NextAuthOptions = {
         },
         async jwt({ token, user }) {
             if (user) {
-                const dbUser = user as { username?: string; email?: string; isVerified?: boolean; createdAt?: Date }
+                const dbUser = user as { username?: string; email?: string; name?: string; dob?: Date; isVerified?: boolean; createdAt?: Date }
                 token.username = dbUser.username
                 token.email = dbUser.email
+                token.name = dbUser.name
+                token.dob = dbUser.dob
                 token.isVerified = dbUser.isVerified
                 token.createdAt = dbUser.createdAt
             }
@@ -83,4 +84,4 @@ export const authOptions: NextAuthOptions = {
 
 const handler = NextAuth(authOptions)
 
-export { handler as GET, handler as POST }
+export { handler as GET, handler as POST }

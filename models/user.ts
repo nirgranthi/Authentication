@@ -15,6 +15,14 @@ const userSchema = new Schema({
         lowercase: true,
         trim: true
     },
+    name: {
+        type: String,
+        required: false
+    },
+    dob: {
+        type: Date,
+        required: false
+    },
     password: {
         type: String,
         required: true
