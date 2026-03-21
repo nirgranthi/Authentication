@@ -10,7 +10,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { DarkModeButton, ShowPasswordButton, SignInButton } from '../components/Buttons'
 import { validateUsername, validatePassword, validateEmail } from '@/lib/validation'
 import { useSession, signIn } from 'next-auth/react'
-
+import { useAuthRedirect } from '../hooks/useAuthRedirect'
+import { useOAuthError } from '../hooks/useOAuthError'
+import { userdataProps } from '../components/types'
 export default function Signup() {
     return (
         <Suspense fallback={<div className="flex h-screen w-full items-center justify-center">Loading...</div>}>
@@ -27,34 +29,15 @@ function SignupContent() {
     const [passwordError, setPasswordError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter()
-    const { data: session, status } = useSession();
-    const searchParams = useSearchParams();
+
+    useAuthRedirect();
+    const oauthError = useOAuthError();
 
     useEffect(() => {
-        const errorParam = searchParams.get('error');
-        if (errorParam) {
-            if (errorParam === 'OAuthSignin' || errorParam === 'OAuthCallback' || errorParam === 'OAuthCreateAccount') {
-               setEmailError("An error occurred during social authentication.");
-            } else if (errorParam === 'AccessDenied') {
-               setEmailError("Access denied. Please try again.");
-            } else {
-               setEmailError(errorParam);
-            }
-        }
-    }, [searchParams]);
+        if (oauthError) setEmailError(oauthError);
+    }, [oauthError]);
 
-    useEffect(() => {
-        if (status === 'authenticated') {
-            const username = (session?.user as Record<string, unknown>)?.username as string;
-            if (username) {
-                router.push(`/profile/${username}`);
-            } else {
-                router.push('/');
-            }
-        }
-    }, [status, session, router]);
-
-    const [userdata, setUserdata] = useState({
+    const [userdata, setUserdata] = useState<userdataProps>({
         email: '',
         username: '',
         password: ''

@@ -11,7 +11,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { DarkModeButton, ShowPasswordButton, SignInButton } from '../components/Buttons'
 import { userdataProps } from '../components/types'
 import { useRememberMe } from '../hooks/useRememberMe'
-
+import { useAuthRedirect } from '../hooks/useAuthRedirect'
+import { useOAuthError } from '../hooks/useOAuthError'
 export default function Login() {
   return (
     <Suspense fallback={<div className="flex h-screen w-full items-center justify-center">Loading...</div>}>
@@ -26,34 +27,13 @@ function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { data: session, status } = useSession();
-  const searchParams = useSearchParams();
+  
+  useAuthRedirect();
+  const oauthError = useOAuthError();
 
   useEffect(() => {
-    const errorParam = searchParams.get('error');
-    if (errorParam) {
-      if (errorParam === 'OAuthSignin' || errorParam === 'OAuthCallback' || errorParam === 'OAuthCreateAccount') {
-         setError("An error occurred during social authentication.");
-      } else if (errorParam === 'AccessDenied') {
-         setError("Access denied. Please try again.");
-      } else if (errorParam === 'CredentialsSignin') {
-         setError("Invalid username/email or password.");
-      } else {
-         setError(errorParam);
-      }
-    }
-  }, [searchParams]);
-
-  useEffect(() => {
-    if (status === 'authenticated') {
-      const username = (session?.user as Record<string, unknown>)?.username as string;
-      if (username) {
-        router.push(`/profile/${username}`);
-      } else {
-        router.push('/');
-      }
-    }
-  }, [status, session, router]);
+    if (oauthError) setError(oauthError);
+  }, [oauthError]);
 
   const [userdata, setUserdata] = useState<userdataProps>({
     username: '',
