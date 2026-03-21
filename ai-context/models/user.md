@@ -1,35 +1,35 @@
 # User Model
-Last updated: 2026-03-20
+Last updated: 2026-03-21
 
 ## Source File
 `models/user.ts`
 
 ## Purpose
-Defines the Mongoose schema and model for the `User` collection in MongoDB. Uses a singleton pattern to prevent model re-registration in Next.js hot-reload environments.
+Defines the Mongoose schema for the `User` collection, supporting credentials, social providers, and verification/reset tokens.
 
 ## Exports
-- `User` (default) — Mongoose model instance
-
-## Logic Summary
-- Defines `userSchema` with three required string fields: `username`, `email`, `password`
-- Enables `timestamps: true` → MongoDB auto-adds `createdAt` and `updatedAt` to every document
-- Uses `models.User || mongoose.model("User", userSchema)` singleton pattern to prevent "Cannot overwrite model" errors in development
+- `User` (default) — Mongoose model.
 
 ## Schema Fields
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
-| `username` | `String` | ✅ | Unique identifier for display/login |
-| `email` | `String` | ✅ | Used for credential login |
-| `password` | `String` | ✅ | Stored as bcrypt hash |
-| `createdAt` | `Date` | auto | Added by `timestamps: true` |
-| `updatedAt` | `Date` | auto | Added by `timestamps: true` |
+| `username` | `String` | No | Unique, sparse, lowercase. |
+| `email` | `String` | Yes | Unique, lowercase. |
+| `password` | `String` | No | Hash (for credentials users). |
+| `name`, `image`| `String` | No | From social providers. |
+| `provider` | `String` | No | Default: "credentials". |
+| `providerId` | `String` | No | ID from social provider. |
+| `isVerified`| `Boolean`| Yes | Default: `false`. |
+| `verificationToken*`| Misc | No | Token and expiry for email verify. |
+| `forgotPasswordToken*`| Misc| No | Token and expiry for reset. |
+
+## Logic Summary
+- Uses timestamps (`createdAt`, `updatedAt`).
+- Singleton pattern: `models.User || mongoose.model("User", userSchema)`.
+- `username` and `email` have `unique: true` at the database level.
 
 ## Dependencies
-- `mongoose` — `Schema`, `models`, `mongoose.model()`
+- `mongoose`.
 
 ## Known Limitations / TODOs
-- No `unique: true` constraint on `email` or `username` in schema (duplicate prevention is done in application logic via `checkUserExists`)
-- No `isVerified` boolean field yet (needed for email verification)
-- No `role` field yet (needed for RBAC)
-- No `phone` field (needed for phone auth)
-- No `refreshToken` field (needed for token rotation)
+- `sparse: true` on `username` allows multiple social users to have no username without collision.

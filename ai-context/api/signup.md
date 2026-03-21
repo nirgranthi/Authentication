@@ -1,43 +1,38 @@
 # Signup Route
-Last updated: 2026-03-20
+Last updated: 2026-03-21
 
 ## Source File
 `app/api/signup/route.ts`
 
 ## Purpose
-Handles new user registration — hashes the password and writes a new User document to MongoDB.
+Handles user registration, including multi-phase validation, password hashing, and triggering the verification flow.
 
 ## Exports
-- `POST` — async handler for `POST /api/signup`
+- `POST` — Processes new user registration.
 
 ## Logic Summary
-1. Parses `{ email, username, password }` from JSON request body
-2. Calls `encrypt(password)` → `bcrypt.hash(password, 10)` to produce `hashedPassword`
-3. Connects to MongoDB via `connectMongoDB()`
-4. Creates a new document: `User.create({ email, username, password: hashedPassword })`
-5. Logs `username` to console on success
-6. Returns `201 { message: "User Registered" }` on success
-7. Catches any error and returns `500 { message: "An error occured while registering the user" }`
-
-**Note:** Duplicate checking is done client-side via `/api/checkUserExists` before this route is called. This route does NOT validate uniqueness itself.
+1. Parses `email`, `username`, and `password` from the request.
+2. Performs server-side validation using `validateUsername` and `validatePassword`.
+3. Normalizes inputs (lowercase).
+4. Connects to MongoDB and performs a uniqueness check for both email and username.
+5. If unique, creates a new `User` document.
+6. Triggers the modular verification email flow via `triggerVerificationEmail`.
+7. Returns a success message instructing the user to check their email.
 
 ## Inputs & Outputs
 | Direction | Name | Type | Description |
 |-----------|------|------|-------------|
-| Input | `email` | `string` | New user's email |
-| Input | `username` | `string` | New user's username |
-| Input | `password` | `string` | Plain-text password — hashed before storage |
-| Output | `201` | JSON | `{ message: "User Registered" }` |
-| Output | `500` | JSON | `{ message: "An error occured while registering the user" }` |
+| Input     | `email` | `string` | User email address. |
+| Input     | `username` | `string` | User username. |
+| Input     | `password` | `string` | Plain-text password. |
+| Output    | `message` | `string` | Confirmation or error message. |
 
 ## Dependencies
-- `@/lib/mongodb` — `connectMongoDB()` 
-- `@/models/user` — Mongoose `User` model
-- `next/server` — `NextResponse`, `NextRequest`
-- `@/app/scripts/encrypt` — `encrypt()` bcrypt wrapper
+- `User` from `@/models/user` — DB Model.
+- `encrypt` from `@/app/scripts/encrypt` — Hashing utility.
+- `triggerVerificationEmail` — Verification flow.
+- `validateUsername`, `validatePassword` — Validation helpers.
 
 ## Known Limitations / TODOs
-- No server-side input validation (no Zod/Yup)
-- No uniqueness check — relies on client calling `/api/checkUserExists` first
-- No welcome email or verification email sent after creation
-- No role assignment on creation
+- Success response code is 201.
+- Error handling uses 409 for duplicates and 400 for validation errors.
