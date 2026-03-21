@@ -87,7 +87,7 @@ app/api/
 │                 Assign default role (e.g. "user") on User.create()
 │
 │
-├── 📁 verifyEmail/ ✅ (NEW)
+├── 📁 verifyEmail/
 │   └── 📄 route.ts                              ← GET /api/verifyEmail?token=...
 │       │
 │       ├── INPUT (query param): token
@@ -98,21 +98,42 @@ app/api/
 │       └── REDIRECTS to /login?verified=true on success
 │           or RETURNS 400 { message: "Invalid or expired verification token." }
 │
-│       └── 🔮 FUTURE INSERTION POINTS
-│           └── [Resend Verification Email]
-│                 POST /api/verifyEmail/resend → generate new token + resend email
+│
+├── 📁 verification-email/
+│   └── 📁 resend/
+│       └── 📄 route.ts                          ← POST /api/verification-email/resend
+│           │
+│           ├── INPUT (JSON body): { email | username }
+│           ├── Connects to MongoDB via connectMongoDB()
+│           ├── Checks if user is already verified
+│           ├── Triggers verification flow via triggerVerificationEmail()
+│           └── RETURNS: 200 { message: "Verification email sent successfully" }
 │
 │
-└── 📁 login/                                    ← ⚠️ Empty (placeholder folder)
+├── 📁 forgotPassword/
+│   └── 📄 route.ts                              ← POST /api/forgotPassword
+│       │
+│       ├── INPUT (JSON body): { email }
+│       ├── Generates randomUUID reset token (expires in 10 min)
+│       ├── Saves token + expiry to user document
+│       ├── Sends reset email via sendForgotPasswordEmail()
+│       └── RETURNS: 200 { message: "If an account with that email exists..." }
+│
+│
+├── 📁 resetPassword/
+│   └── 📄 route.ts                              ← POST /api/resetPassword
+│       │
+│       ├── INPUT (JSON body): { token, newPassword }
+│       ├── Validates password strength locally
+│       ├── Resolves user by token (must be > now)
+│       ├── Hashes new password via encrypt()
+│       ├── Sets isVerified: true (link proof)
+│       ├── Clears reset token fields
+│       └── RETURNS: 200 { message: "Your password has been successfully reset." }
+│
+│
+└── 📁 login/                                    
     └── (no route.ts — login is handled via NextAuth at /api/auth/...)
-
-    └── 🔮 FUTURE INSERTION POINTS
-        ├── [Custom Login Audit Log]
-        │     POST /api/login/log → record IP, device, timestamp on each login
-        │
-        └── [Forgot Password]
-              POST /api/login/forgotPassword → send reset link via email
-              POST /api/login/resetPassword  → validate token + update hashed password
 ```
 
 ---
@@ -125,13 +146,15 @@ lib/
 │   └── mongoose.connect(process.env.MONGO_URL)
 │       Used by: ALL active routes
 │
-└── sendVerificationEmail.ts ✅ (NEW)
-    → sendVerificationEmail({ email, verificationUrl, username })
-    → Nodemailer + Gmail SMTP (EMAIL_USER / EMAIL_PASS env vars)
-       Used by: signup/route.ts
+├── validation.ts           → validateEmail(), validateUsername(), validatePassword()
+├── sendForgotPasswordEmail.ts → Email utility for password resets
+│
+features/verification-email/
+├── triggerVerificationEmail.ts → Main entry for verification flow
+└── sendVerificationEmail.ts    → Email transport for verification
 
 models/
-└── user.ts             → Mongoose User schema
+└── user.ts             → Mongoose User schema (isVerified, tokens, etc.)
     Fields: username, email, password,
             isVerified (Boolean, default: false) ✅,
             verificationToken (String) ✅,
@@ -151,16 +174,4 @@ app/scripts/
 
 ## 🔮 Broad Future Features & Where to Add Them
 
-| Feature                    | Where to Add                                                         |
-|----------------------------|----------------------------------------------------------------------|
-| ~~Email Verification~~     | ✅ **Implemented** — `signup/route.ts` + `api/verifyEmail/route.ts`  |
-| Resend Verification Email  | New `api/verifyEmail/resend/route.ts`                                |
-| Forgot / Reset Password    | New `api/login/forgotPassword/route.ts` + `resetPassword/route.ts`  |
-| OAuth (Google / GitHub)    | `auth/[...nextauth]/route.ts` inside `providers: []`                |
-| JWT Role / Claims          | `auth/[...nextauth]/route.ts` `callbacks.jwt` + `callbacks.session` |
-| MFA / 2FA                  | `auth/[...nextauth]/route.ts` inside `authorize()`                  |
-| Rate Limiting              | Middleware (`middleware.ts`) or wrapper around `authorize()`         |
-| Audit / Login Logs         | New `api/login/log/route.ts` or inside NextAuth `events.signIn`     |
-| Phone Number Auth          | `models/user.ts` (add field) + `checkUserExists/route.ts` + signup  |
-| Input Validation (Zod)     | `signup/route.ts` + `checkUserExists/route.ts` before DB calls       |
 | Refresh Token Rotation     | `auth/[...nextauth]/route.ts` `callbacks.jwt` block                 |
