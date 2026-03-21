@@ -2,8 +2,7 @@ import { connectMongoDB } from "@/lib/mongodb"
 import User from "@/models/user"
 import { NextResponse, NextRequest } from "next/server"
 import { encrypt } from "@/app/scripts/encrypt"
-import { sendVerificationEmail } from "@/lib/sendVerificationEmail"
-import crypto from "crypto"
+import { triggerVerificationEmail } from "@/features/verification-email/triggerVerificationEmail"
 import { validateUsername, validatePassword } from "@/lib/validation"
 
 export async function POST(req: NextRequest) {
@@ -39,24 +38,15 @@ export async function POST(req: NextRequest) {
         }
 
 
-        // Generate a verification token that expires in 10 minutes
-        const verificationToken = crypto.randomUUID()
-        const verificationTokenExpiry = new Date(Date.now() + 10 * 60 * 1000)
-
         await User.create({
             email: normalizedEmail,
             username: normalizedUsername,
             password: hashedPassword,
-            verificationToken,
-            verificationTokenExpiry,
         })
         console.log('user added to DB: ', username)
 
-        // Send the verification email
-        const baseUrl = process.env.NEXTAUTH_URL
-        const verificationUrl = `${baseUrl}/verify-email?token=${verificationToken}`
-
-        await sendVerificationEmail({ email, verificationUrl, username })
+        // Trigger the modular verification email feature
+        await triggerVerificationEmail(normalizedEmail, normalizedUsername)
 
         return NextResponse.json(
             { message: "User Registered. Please check your email to verify your account." },

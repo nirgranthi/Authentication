@@ -13,6 +13,7 @@ import { userdataProps } from '../components/types'
 import { useRememberMe } from '../hooks/useRememberMe'
 import { useAuthRedirect } from '../hooks/useAuthRedirect'
 import { useOAuthError } from '../hooks/useOAuthError'
+import { ResendVerificationButton } from '@/features/verification-email/ResendVerificationButton'
 export default function Login() {
   return (
     <Suspense fallback={<div className="flex h-screen w-full items-center justify-center">Loading...</div>}>
@@ -135,6 +136,11 @@ function LoginContent() {
           </div>
 
           {error && <div className="errorMsg">{error}</div>}
+          
+          {error === "Please verify your email before logging in." && (
+            <ResendVerificationButton email={userdata.email} username={userdata.username} />
+          )}
+          
           <SignInButton isLoading={isLoading} text="Sign In" />
           <p className="p">{`Don't have an account?`} <Link href="/signup" className="span">Sign Up</Link></p>
           <div className="flexRow">
