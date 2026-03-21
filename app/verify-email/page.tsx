@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import axios from 'axios'
 import { StyledWrapper } from '../styles/LoginCSS'
@@ -9,6 +9,14 @@ import { useDarkMode } from '../hooks/useDarkMode'
 type Status = 'loading' | 'success' | 'error'
 
 export default function VerifyEmailPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <VerifyEmailContent />
+        </Suspense>
+    )
+}
+
+function VerifyEmailContent() {
     const [status, setStatus] = useState<Status>('loading')
     const [message, setMessage] = useState('')
     const [isDarkMode] = useDarkMode(false)

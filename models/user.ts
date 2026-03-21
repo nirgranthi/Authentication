@@ -3,8 +3,9 @@ import mongoose, { models, Schema } from "mongoose";
 const userSchema = new Schema({
     username: {
         type: String,
-        required: true,
+        required: false,
         unique: true,
+        sparse: true,
         lowercase: true,
         trim: true
     },
@@ -19,13 +20,26 @@ const userSchema = new Schema({
         type: String,
         required: false
     },
+    image: {
+        type: String,
+        required: false
+    },
+    provider: {
+        type: String,
+        required: false,
+        default: "credentials"
+    },
+    providerId: {
+        type: String,
+        required: false
+    },
     dob: {
         type: Date,
         required: false
     },
     password: {
         type: String,
-        required: true
+        required: false
     },
     isVerified: {
         type: Boolean,
@@ -37,7 +51,7 @@ const userSchema = new Schema({
     verificationTokenExpiry: {
         type: Date
     }
-}, { timestamps: true}
+}, { timestamps: true }
 );
 
 const User = models.User || mongoose.model("User", userSchema)

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, ChangeEvent, SubmitEvent } from 'react'
+import { useState, ChangeEvent, SubmitEvent, useEffect } from 'react'
 import { useDarkMode } from '../hooks/useDarkMode'
 import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, UsernameSvg } from '../components/SVGs'
 import { StyledWrapper } from '../styles/LoginCSS'
@@ -9,6 +9,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { DarkModeButton, ShowPasswordButton, SignInButton } from '../components/Buttons'
 import { validateUsername, validatePassword, validateEmail } from '@/lib/validation'
+import { useSession, signIn } from 'next-auth/react'
 
 export default function Signup() {
     const [isDarkMode, setIsDarkMode] = useDarkMode(false);
@@ -18,6 +19,18 @@ export default function Signup() {
     const [passwordError, setPasswordError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter()
+    const { data: session, status } = useSession();
+
+    useEffect(() => {
+        if (status === 'authenticated') {
+            const username = (session?.user as Record<string, unknown>)?.username as string;
+            if (username) {
+                router.push(`/profile/${username}`);
+            } else {
+                router.push('/');
+            }
+        }
+    }, [status, session, router]);
 
     const [userdata, setUserdata] = useState({
         email: '',
@@ -145,11 +158,11 @@ export default function Signup() {
                     </p>
 
                     <div className="flexRow">
-                        <button type="button" className="btn">
+                        <button type="button" className="btn" onClick={() => signIn('google')}>
                             <GoogleSvg /> Google
                         </button>
 
-                        <button type="button" className="btn">
+                        <button type="button" className="btn" onClick={() => signIn('apple')}>
                             <AppleSvg /> Apple
                         </button>
                     </div>

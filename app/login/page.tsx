@@ -1,12 +1,12 @@
 'use client'
 
-import { ChangeEvent, SubmitEvent, useState } from 'react'
+import { ChangeEvent, SubmitEvent, useState, useEffect } from 'react'
 import { useDarkMode } from '../hooks/useDarkMode'
 import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg } from '../components/SVGs'
 import { StyledWrapper } from '../styles/LoginCSS'
 import { validateEmail } from '@/lib/validation'
 import Link from 'next/link'
-import { signIn, getSession } from 'next-auth/react'
+import { signIn, getSession, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { DarkModeButton, ShowPasswordButton, SignInButton } from '../components/Buttons'
 import { userdataProps } from '../components/types'
@@ -18,6 +18,18 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      const username = (session?.user as Record<string, unknown>)?.username as string;
+      if (username) {
+        router.push(`/profile/${username}`);
+      } else {
+        router.push('/');
+      }
+    }
+  }, [status, session, router]);
 
   const [userdata, setUserdata] = useState<userdataProps>({
     username: '',
@@ -118,11 +130,11 @@ export default function Login() {
           <SignInButton isLoading={isLoading} text="Sign In" />
           <p className="p">{`Don't have an account?`} <Link href="/signup" className="span">Sign Up</Link></p>
           <div className="flexRow">
-            <button className="btn">
+            <button type="button" className="btn" onClick={() => signIn('google')}>
               <GoogleSvg />
               Google
             </button>
-            <button className="btn">
+            <button type="button" className="btn" onClick={() => signIn('apple')}>
               <AppleSvg />
               Apple
             </button>
