@@ -50,6 +50,12 @@ const userSchema = new Schema({
     },
     verificationTokenExpiry: {
         type: Date
+    },
+    forgotPasswordToken: {
+        type: String
+    },
+    forgotPasswordTokenExpiry: {
+        type: Date
     }
 }, { timestamps: true }
 );

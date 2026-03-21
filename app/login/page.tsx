@@ -62,7 +62,11 @@ function LoginContent() {
 
       if (res?.error) {
         console.log("Login error:", res.error);
-        setError("Invalid username/email or password");
+        if (res.error === 'AccessDenied') {
+          setError("Please verify your email before logging in.");
+        } else {
+          setError("Invalid username/email or password");
+        }
       } else {
         // Fetch updated session to get username for redirect
         const session = await getSession();
@@ -127,7 +131,7 @@ function LoginContent() {
               />
               <span>Remember me</span>
             </label>
-            <span className="span">Forgot password?</span>
+            <Link href="/forgot-password" className="span">Forgot password?</Link>
           </div>
 
           {error && <div className="errorMsg">{error}</div>}
