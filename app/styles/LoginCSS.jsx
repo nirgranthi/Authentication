@@ -5,74 +5,7 @@ export const StyledWrapper = styled.div`
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f7f7f7;
-  color: #151717;
   transition: background-color 0.3s, color 0.3s;
-
-  &.dark-mode {
-    background-color: #121212;
-    color: #e0e0e0;
-
-    .form {
-      background-color: #1e1e1e;
-      box-shadow: 
-        0 20px 40px rgba(0, 0, 0, 0.5),
-        0 5px 15px rgba(0, 0, 0, 0.3),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.05),
-        inset 0 2px 0 rgba(255, 255, 255, 0.05);
-    }
-
-    .form:hover {
-      box-shadow: 
-        0 30px 50px rgba(0, 0, 0, 0.6),
-        0 10px 20px rgba(0, 0, 0, 0.4),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.05),
-        inset 0 2px 0 rgba(255, 255, 255, 0.05);
-    }
-
-    ::placeholder {
-      color: #888;
-    }
-
-    .flexColumn > label {
-      color: #e0e0e0;
-    }
-
-    .inputForm {
-      border-color: #333;
-      background-color: #2a2a2a;
-    }
-
-    .input {
-        color: #e0e0e0;
-    }
-
-    .inputForm:focus-within {
-      border-color: #4da3ff;
-    }
-
-    .rememberMe > span {
-      color: #e0e0e0;
-    }
-
-    .span {
-      color: #4da3ff;
-    }
-
-    .p {
-      color: #e0e0e0;
-    }
-
-    .btn {
-      background-color: #2a2a2a;
-      color: #e0e0e0;
-      border-color: #444;
-    }
-
-    .btn:hover {
-      border-color: #4da3ff;
-    }
-  }
 
   .wrapper {
     padding: 2rem;
@@ -82,7 +15,6 @@ export const StyledWrapper = styled.div`
     display: flex;
     flex-direction: column;
     gap: 10px;
-    background-color: #ffffff;
     padding: 30px;
     width: 450px;
     border-radius: 20px;
@@ -107,7 +39,6 @@ export const StyledWrapper = styled.div`
 
   ::placeholder {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    color: #999;
   }
 
   .form button {
@@ -121,12 +52,11 @@ export const StyledWrapper = styled.div`
   }
 
   .flexColumn > label {
-    color: #151717;
     font-weight: 600;
   }
 
   .inputForm {
-    border: 1.5px solid #ecedec;
+    border: 1.5px solid transparent;
     border-radius: 10px;
     height: 50px;
     display: flex;
@@ -134,7 +64,6 @@ export const StyledWrapper = styled.div`
     padding-left: 10px;
     padding-right: 5px;
     transition: 0.2s ease-in-out;
-    background-color: #fff;
   }
 
   .input {
@@ -144,7 +73,6 @@ export const StyledWrapper = styled.div`
     width: 100%;
     height: 100%;
     background: transparent;
-    color: #151717;
     font-size: 15px;
   }
 
@@ -153,7 +81,6 @@ export const StyledWrapper = styled.div`
   }
 
   .inputForm:focus-within {
-    border: 1.5px solid #2d79f3;
   }
 
   .flexRow {
@@ -173,7 +100,6 @@ export const StyledWrapper = styled.div`
 
   .rememberMe > span {
     font-size: 14px;
-    color: #151717;
     font-weight: 400;
   }
   
@@ -184,7 +110,6 @@ export const StyledWrapper = styled.div`
   .span {
     font-size: 14px;
     margin-left: 5px;
-    color: #2d79f3;
     font-weight: 500;
     cursor: pointer;
   }
@@ -199,7 +124,6 @@ export const StyledWrapper = styled.div`
 
   .p {
     text-align: center;
-    color: #151717;
     font-size: 14px;
     margin: 5px 0;
   }
@@ -214,14 +138,10 @@ export const StyledWrapper = styled.div`
     align-items: center;
     font-weight: 500;
     gap: 10px;
-    border: 1px solid #ededef;
-    background-color: white;
-    color: #151717;
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s, border-color 0.2s;
   }
 
   .btn:hover {
-    border: 1px solid #2d79f3;
   }
 `
