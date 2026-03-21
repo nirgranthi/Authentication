@@ -1,6 +1,6 @@
 'use client'
 
-import { ChangeEvent, SubmitEvent, useEffect, useState } from 'react'
+import { ChangeEvent, SubmitEvent, useState } from 'react'
 import { useDarkMode } from '../hooks/useDarkMode'
 import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg } from '../components/SVGs'
 import { StyledWrapper } from '../styles/LoginCSS'
@@ -9,6 +9,8 @@ import Link from 'next/link'
 import { signIn, getSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { DarkModeButton, ShowPasswordButton, SignInButton } from '../components/Buttons'
+import { userdataProps } from '../components/types'
+import { useRememberMe } from '../hooks/useRememberMe'
 
 export default function Login() {
   const router = useRouter();
@@ -17,25 +19,12 @@ export default function Login() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const [userdata, setUserdata] = useState({
+  const [userdata, setUserdata] = useState<userdataProps>({
     username: '',
     email: '',
     password: ''
   })
-  const [rememberMe, setRememberMe] = useState(false);
-
-  // Load remembered user
-  useEffect(() => {
-    const rememberedUser = localStorage.getItem('rememberedUser');
-    if (rememberedUser) {
-      if (validateEmail(rememberedUser).valid) {
-        setUserdata(prev => ({ ...prev, email: rememberedUser, username: '' }));
-      } else {
-        setUserdata(prev => ({ ...prev, username: rememberedUser, email: '' }));
-      }
-      setRememberMe(true);
-    }
-  }, []);
+  const [rememberMe, setRememberMe] = useRememberMe(true, setUserdata);
 
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -89,7 +78,7 @@ export default function Login() {
     <StyledWrapper className={isDarkMode ? 'dark-mode' : ''}>
       <div className="wrapper">
         <form className="form" onSubmit={handleSubmit}>
-          <div className="flexRow mb-[10px]">
+          <div className="flexRow mb-2.5">
             <h2>Sign In</h2>
             <DarkModeButton isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
           </div>
@@ -119,7 +108,6 @@ export default function Login() {
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                defaultChecked
               />
               <span>Remember me</span>
             </label>
