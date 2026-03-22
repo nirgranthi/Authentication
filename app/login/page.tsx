@@ -2,18 +2,19 @@
 
 import { ChangeEvent, SubmitEvent, useState, useEffect, Suspense } from 'react'
 import { useTheme } from '../components/ThemeProvider'
-import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg } from '../components/SVGs'
+import { EmailSvg, PasswordSvg } from '../components/SVGs'
 import { StyledWrapper } from '../styles/LoginCSS'
 import { validateEmail } from '@/lib/validation'
 import Link from 'next/link'
-import { signIn, getSession, useSession } from 'next-auth/react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { DarkModeButton, ShowPasswordButton, SignInButton } from '../components/Buttons'
+import { signIn, getSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { DarkModeButton, ShowPasswordButton, SignInButton, SignInProviders } from '../components/Buttons'
 import { userdataProps } from '../components/types'
 import { useRememberMe } from '../hooks/useRememberMe'
 import { useAuthRedirect } from '../hooks/useAuthRedirect'
 import { useOAuthError } from '../hooks/useOAuthError'
 import { ResendVerificationButton } from '@/features/verification-email/ResendVerificationButton'
+
 export default function Login() {
   return (
     <Suspense fallback={<div className="flex h-screen w-full items-center justify-center">Loading...</div>}>
@@ -28,7 +29,7 @@ function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
+
   useAuthRedirect();
   const oauthError = useOAuthError();
 
@@ -107,7 +108,7 @@ function LoginContent() {
           <div className="flexColumn">
             <label className="text-[#151717] dark:text-[#e0e0e0]">Email </label>
           </div>
-          <div className="inputForm border-[1.5px] border-[#ecedec] bg-[#fff] dark:bg-[#2a2a2a] dark:border-[#333] focus-within:border-[#2d79f3] dark:focus-within:border-[#4da3ff]">
+          <div className="inputForm border-[1.5px] border-[#ecedec] bg-white dark:bg-[#2a2a2a] dark:border-[#333] focus-within:border-[#2d79f3] dark:focus-within:border-[#4da3ff]">
             <EmailSvg />
             <input placeholder="Enter your Email/Username" className="input text-[#151717] dark:text-[#e0e0e0] placeholder-[#999] dark:placeholder-[#888]" type="text" minLength={4} required
               value={userdata.email || userdata.username} onChange={handleIdentifierChange} />
@@ -116,7 +117,7 @@ function LoginContent() {
           <div className="flexColumn">
             <label className="text-[#151717] dark:text-[#e0e0e0]">Password </label>
           </div>
-          <div className="inputForm border-[1.5px] border-[#ecedec] bg-[#fff] dark:bg-[#2a2a2a] dark:border-[#333] focus-within:border-[#2d79f3] dark:focus-within:border-[#4da3ff]">
+          <div className="inputForm border-[1.5px] border-[#ecedec] bg-white dark:bg-[#2a2a2a] dark:border-[#333] focus-within:border-[#2d79f3] dark:focus-within:border-[#4da3ff]">
             <PasswordSvg />
             <input placeholder="Enter your Password" className="input text-[#151717] dark:text-[#e0e0e0] placeholder-[#999] dark:placeholder-[#888]" type={showPassword ? "text" : "password"} minLength={8} required
               value={userdata.password} onChange={(e) => { setError(''); setUserdata({ ...userdata, password: e.target.value }); }} />
@@ -136,23 +137,16 @@ function LoginContent() {
           </div>
 
           {error && <div className="errorMsg">{error}</div>}
-          
+
           {error === "Please verify your email before logging in." && (
             <ResendVerificationButton email={userdata.email} username={userdata.username} />
           )}
-          
+
           <SignInButton isLoading={isLoading} text="Sign In" />
           <p className="p text-[#151717] dark:text-[#e0e0e0]">{`Don't have an account?`} <Link href="/signup" className="span text-[#2d79f3] dark:text-[#4da3ff]">Sign Up</Link></p>
-          <div className="flexRow">
-            <button type="button" className="btn bg-white dark:bg-[#2a2a2a] text-[#151717] dark:text-[#e0e0e0] border border-[#ededef] dark:border-[#444] hover:border-[#2d79f3] dark:hover:border-[#4da3ff]" onClick={() => signIn('google')}>
-              <GoogleSvg />
-              Google
-            </button>
-            <button type="button" className="btn bg-white dark:bg-[#2a2a2a] text-[#151717] dark:text-[#e0e0e0] border border-[#ededef] dark:border-[#444] hover:border-[#2d79f3] dark:hover:border-[#4da3ff]" onClick={() => signIn('apple')}>
-              <AppleSvg />
-              Apple
-            </button>
-          </div>
+
+          <SignInProviders />
+
         </form>
       </div>
     </StyledWrapper>
