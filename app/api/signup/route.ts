@@ -4,6 +4,7 @@ import { NextResponse, NextRequest } from "next/server"
 import { encrypt } from "@/app/scripts/encrypt"
 import { triggerVerificationEmail } from "@/features/verification-email/triggerVerificationEmail"
 import { validateUsername, validatePassword } from "@/lib/validation"
+import { isEmailExists, isUsernameExists } from "@/lib/userChecks"
 
 export async function POST(req: NextRequest) {
     try {
@@ -27,13 +28,11 @@ export async function POST(req: NextRequest) {
         await connectMongoDB()
 
         // Check if user already exists (backend safety check)
-        const existingEmail = await User.findOne({ email: normalizedEmail }).select("_id")
-        if (existingEmail) {
+        if (await isEmailExists(normalizedEmail)) {
             return NextResponse.json({ message: "Email is already in use" }, { status: 409 })
         }
 
-        const existingUsername = await User.findOne({ username: normalizedUsername }).select("_id")
-        if (existingUsername) {
+        if (await isUsernameExists(normalizedUsername)) {
             return NextResponse.json({ message: "Username is already in use" }, { status: 409 })
         }
 

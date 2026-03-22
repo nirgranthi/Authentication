@@ -2,6 +2,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import User from "@/models/user";
 import { connectMongoDB } from "@/lib/mongodb";
 import { verifyOTP } from "./lib/otp";
+import { generateUniqueEmail, generateUniqueUsername } from "@/lib/userChecks";
 
 export const phoneAuthProvider = CredentialsProvider({
     id: "phone-otp",
@@ -32,8 +33,9 @@ export const phoneAuthProvider = CredentialsProvider({
             if (!user) {
                 // Generate dummy email and username for new phone user
                 const numericPhone = phone.replace('+', ''); // e.g. 919876543210
-                const dummyEmail = `${numericPhone}@authentication.com`;
-                const dummyUsername = `user_${numericPhone}`;
+                
+                const dummyEmail = await generateUniqueEmail(`${numericPhone}@authentication.com`);
+                const dummyUsername = await generateUniqueUsername(`user_${numericPhone}`);
 
                 user = new User({
                     phoneNumber: phone,

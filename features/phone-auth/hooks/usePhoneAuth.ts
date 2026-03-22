@@ -11,7 +11,7 @@ export const usePhoneAuth = () => {
     const [error, setError] = useState('');
     const router = useRouter();
 
-    const requestOTP = async (e: React.SubmitEvent) => {
+    const requestOTP = async (e: React.SyntheticEvent) => {
         e.preventDefault();
         setError('');
 
@@ -34,7 +34,7 @@ export const usePhoneAuth = () => {
         }
     };
 
-    const verifyAndSignIn = async (e: React.SubmitEvent) => {
+    const verifyAndSignIn = async (e: React.SyntheticEvent) => {
         e.preventDefault();
         setError('');
         if (otp.length !== 6) {

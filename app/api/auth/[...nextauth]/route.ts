@@ -8,6 +8,7 @@ import bcrypt from "bcryptjs"
 import { connectMongoDB } from "@/lib/mongodb"
 import { validateEmail, validateUsername } from "@/lib/validation"
 import { phoneAuthProvider } from "@/features/phone-auth/provider"
+import { generateUniqueUsername } from "@/lib/userChecks"
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -84,8 +85,12 @@ export const authOptions: NextAuthOptions = {
                 if (user.email) {
                     const existingUser = await User.findOne({ email: user.email.toLowerCase() });
                     if (!existingUser) {
+                        const baseUsername = user.email.split('@')[0];
+                        const uniqueUsername = await generateUniqueUsername(baseUsername);
+
                         const newUser = new User({
                             email: user.email.toLowerCase(),
+                            username: uniqueUsername,
                             name: user.name,
                             image: user.image,
                             provider: account?.provider,
