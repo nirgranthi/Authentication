@@ -9,6 +9,12 @@ const userSchema = new Schema({
         lowercase: true,
         trim: true
     },
+    phoneNumber: {
+        type: String,
+        required: false,
+        unique: true,
+        sparse: true
+    },
     email: {
         type: String,
         required: true,

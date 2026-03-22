@@ -1,4 +1,5 @@
 import { AppleSvg, EyeOffSvg, EyeSvg, GoogleSvg, MoonSvg, SunSvg } from "./SVGs"
+import { PhoneSignInButton } from "@/features/phone-auth/components/PhoneSignInButton"
 
 export const SignInButton = ({ isLoading, text }) => {
     return (
@@ -38,21 +39,24 @@ export const ShowPasswordButton = ({ showPassword, setShowPassword }) => {
 export const SignInProviders = () => {
     const classname = "btn bg-white dark:bg-[#2a2a2a] text-[#151717] dark:text-[#e0e0e0] border border-[#ededef] dark:border-[#444] hover:border-[#2d79f3] dark:hover:border-[#4da3ff]"
     return (
-        <div className="flexRow">
-            <button
-                type="button"
-                className={classname}
-                onClick={() => signIn('google')}>
-                <GoogleSvg />
-                Google
-            </button>
-            <button
-                type="button"
-                className={classname}
-                onClick={() => signIn('apple')}>
-                <AppleSvg />
-                Apple
-            </button>
+        <div className="flexColumn w-full">
+            <div className="flexRow w-full">
+                <button
+                    type="button"
+                    className={classname}
+                    onClick={() => signIn('google')}>
+                    <GoogleSvg />
+                    Google
+                </button>
+                <button
+                    type="button"
+                    className={classname}
+                    onClick={() => signIn('apple')}>
+                    <AppleSvg />
+                    Apple
+                </button>
+            </div>
+            <PhoneSignInButton />
         </div>
     )
 }

@@ -7,9 +7,11 @@ import User from "@/models/user"
 import bcrypt from "bcryptjs"
 import { connectMongoDB } from "@/lib/mongodb"
 import { validateEmail, validateUsername } from "@/lib/validation"
+import { phoneAuthProvider } from "@/features/phone-auth/provider"
 
 export const authOptions: NextAuthOptions = {
     providers: [
+        phoneAuthProvider,
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID as string,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
@@ -101,14 +103,15 @@ export const authOptions: NextAuthOptions = {
         },
         async jwt({ token, user, account }) {
             if (user) {
-                if (account?.provider === "credentials") {
-                    const dbUser = user as { username?: string; email?: string; name?: string; dob?: Date; isVerified?: boolean; createdAt?: Date }
+                if (account?.provider === "credentials" || account?.provider === "phone-otp") {
+                    const dbUser = user as { username?: string; email?: string; name?: string; dob?: Date; isVerified?: boolean; createdAt?: Date, phoneNumber?: string }
                     token.username = dbUser.username
                     token.email = dbUser.email
                     token.name = dbUser.name
                     token.dob = dbUser.dob
                     token.isVerified = dbUser.isVerified
                     token.createdAt = dbUser.createdAt
+                    token.phoneNumber = dbUser.phoneNumber
                 } else {
                     // Fetch user info from MongoDB for OAuth
                     await connectMongoDB();
@@ -120,6 +123,7 @@ export const authOptions: NextAuthOptions = {
                         token.dob = dbUser.dob
                         token.isVerified = dbUser.isVerified
                         token.createdAt = dbUser.createdAt
+                        token.phoneNumber = dbUser.phoneNumber
                     }
                 }
             }
@@ -130,6 +134,7 @@ export const authOptions: NextAuthOptions = {
                 (session.user as Record<string, unknown>).username = token.username
                 ;(session.user as Record<string, unknown>).isVerified = token.isVerified
                 ;(session.user as Record<string, unknown>).createdAt = token.createdAt
+                ;(session.user as Record<string, unknown>).phoneNumber = token.phoneNumber
             }
             return session
         }
