@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, ChangeEvent, SubmitEvent, useEffect, Suspense } from 'react'
-import { useDarkMode } from '../hooks/useDarkMode'
+// Removed useDarkMode import as it is now handled by useTheme
 import { AppleSvg, EmailSvg, GoogleSvg, PasswordSvg, UsernameSvg } from '../components/SVGs'
 import { StyledWrapper } from '../styles/LoginCSS'
 import Link from 'next/link';
@@ -13,6 +13,7 @@ import { useSession, signIn } from 'next-auth/react'
 import { useAuthRedirect } from '../hooks/useAuthRedirect'
 import { useOAuthError } from '../hooks/useOAuthError'
 import { userdataProps } from '../components/types'
+import { useTheme } from '../components/ThemeProvider'
 export default function Signup() {
     return (
         <Suspense fallback={<div className="flex h-screen w-full items-center justify-center">Loading...</div>}>
@@ -22,7 +23,7 @@ export default function Signup() {
 }
 
 function SignupContent() {
-    const [isDarkMode, setIsDarkMode] = useDarkMode(false);
+    const { isDarkMode, setIsDarkMode } = useTheme();
     const [showPassword, setShowPassword] = useState(false);
     const [emailError, setEmailError] = useState('');
     const [usernameError, setUsernameError] = useState('');
@@ -116,58 +117,60 @@ function SignupContent() {
     };
 
     return (
-        <StyledWrapper className={isDarkMode ? 'dark-mode' : ''}>
+        <StyledWrapper className="bg-[#f7f7f7] text-[#151717] dark:bg-[#121212] dark:text-[#e0e0e0]">
             <div className="wrapper">
-                <form className="form" onSubmit={handleSubmit}>
+                <form className="form bg-white dark:bg-[#1e1e1e] dark:shadow-[0_20px_40px_rgba(0,0,0,0.5),0_5px_15px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_2px_0_rgba(255,255,255,0.05)] hover:dark:shadow-[0_30px_50px_rgba(0,0,0,0.6),0_10px_20px_rgba(0,0,0,0.4),inset_0_0_0_1px_rgba(255,255,255,0.05),inset_0_2px_0_rgba(255,255,255,0.05)]"
+                    onSubmit={handleSubmit}>
                     <div className="flexRow" style={{ marginBottom: '10px' }}>
                         <h2>Sign Up</h2>
                         <DarkModeButton isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
                     </div>
 
                     <div className="flexColumn">
-                        <label>Username </label>
+                        <label className="text-[#151717] dark:text-[#e0e0e0]">Username </label>
                     </div>
-                    <div className="inputForm">
+                    <div className="inputForm border-[1.5px] border-[#ecedec] bg-[#fff] dark:bg-[#2a2a2a] dark:border-[#333] focus-within:border-[#2d79f3] dark:focus-within:border-[#4da3ff]">
                         <UsernameSvg />
                         <input name="username" value={userdata.username} onChange={handleChange}
-                            placeholder="Enter your Username" className="input" type="text" minLength={4} maxLength={20} required />
+                            placeholder="Enter your Username" className="input text-[#151717] dark:text-[#e0e0e0] placeholder-[#999] dark:placeholder-[#888]"
+                            type="text" minLength={4} maxLength={20} required />
                     </div>
                     {usernameError && <div className="errorMsg">{usernameError}</div>}
 
                     <div className="flexColumn">
-                        <label>Email </label>
+                        <label className="text-[#151717] dark:text-[#e0e0e0]">Email </label>
                     </div>
-                    <div className="inputForm">
+                    <div className="inputForm border-[1.5px] border-[#ecedec] bg-[#fff] dark:bg-[#2a2a2a] dark:border-[#333] focus-within:border-[#2d79f3] dark:focus-within:border-[#4da3ff]">
                         <EmailSvg />
                         <input name="email" value={userdata.email} onChange={handleChange}
-                            placeholder="Enter your Email" className="input" type="email" required />
+                            placeholder="Enter your Email" className="input text-[#151717] dark:text-[#e0e0e0] placeholder-[#999] dark:placeholder-[#888]" type="email" required />
                     </div>
                     {emailError && <div className="errorMsg">{emailError}</div>}
 
                     <div className="flexColumn">
-                        <label>Password </label>
+                        <label className="text-[#151717] dark:text-[#e0e0e0]">Password </label>
                     </div>
-                    <div className="inputForm">
+                    <div className="inputForm border-[1.5px] border-[#ecedec] bg-[#fff] dark:bg-[#2a2a2a] dark:border-[#333] focus-within:border-[#2d79f3] dark:focus-within:border-[#4da3ff]">
                         <PasswordSvg />
                         <input name="password" value={userdata.password} onChange={handleChange} minLength={8}
-                            placeholder="Enter your Password" className="input" type={showPassword ? "text" : "password"} required />
+                            placeholder="Enter your Password" className="input text-[#151717] dark:text-[#e0e0e0] placeholder-[#999] dark:placeholder-[#888]" type={showPassword ? "text" : "password"} required />
                         <ShowPasswordButton showPassword={showPassword} setShowPassword={setShowPassword} />
                     </div>
                     {passwordError && <div className="errorMsg">{passwordError}</div>}
 
                     <SignInButton isLoading={isLoading} text="Sign Up" />
 
-                    <p className="p">
+                    <p className="p text-[#151717] dark:text-[#e0e0e0]">
                         {`Already have an account?`}
-                        <Link href="/login" className="span">Sign In</Link>
+                        <Link href="/login" className="span text-[#2d79f3] dark:text-[#4da3ff]">Sign In</Link>
                     </p>
 
                     <div className="flexRow">
-                        <button type="button" className="btn" onClick={() => signIn('google')}>
+                        <button type="button" className="btn bg-white dark:bg-[#2a2a2a] text-[#151717] dark:text-[#e0e0e0] border border-[#ededef] dark:border-[#444] hover:border-[#2d79f3] dark:hover:border-[#4da3ff]" onClick={() => signIn('google')}>
                             <GoogleSvg /> Google
                         </button>
 
-                        <button type="button" className="btn" onClick={() => signIn('apple')}>
+                        <button type="button" className="btn bg-white dark:bg-[#2a2a2a] text-[#151717] dark:text-[#e0e0e0] border border-[#ededef] dark:border-[#444] hover:border-[#2d79f3] dark:hover:border-[#4da3ff]" onClick={() => signIn('apple')}>
                             <AppleSvg /> Apple
                         </button>
                     </div>
