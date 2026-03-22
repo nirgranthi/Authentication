@@ -32,10 +32,12 @@ export const phoneAuthProvider = CredentialsProvider({
 
             if (!user) {
                 // Generate dummy email and username for new phone user
-                const numericPhone = phone.replace('+', ''); // e.g. 919876543210
+                const lastTwoDigits = phone.slice(-2);
+                const randomSuffix = Math.random().toString(36).substring(2, 7);
+                const baseIdentifier = `user_${lastTwoDigits}_${randomSuffix}`;
                 
-                const dummyEmail = await generateUniqueEmail(`${numericPhone}@authentication.com`);
-                const dummyUsername = await generateUniqueUsername(`user_${numericPhone}`);
+                const dummyEmail = await generateUniqueEmail(`${baseIdentifier}@authentication.com`);
+                const dummyUsername = await generateUniqueUsername(baseIdentifier);
 
                 user = new User({
                     phoneNumber: phone,
