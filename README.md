@@ -16,6 +16,7 @@ bun dev
 # Login Page
 - Takes either username or email
 - Sends a "Login detected" email to the user(coming soon...)
+- Alerts user if login is from a new device
 
 # Signup Page
 - Sends verification email, click-to-verify format using a token(expire in 10 min)

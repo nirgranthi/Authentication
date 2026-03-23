@@ -7,7 +7,7 @@ This document provides a comprehensive guide to all API endpoints available in t
 ## 🔐 1. Authentication (NextAuth.js)
 
 ### `GET/POST /api/auth/[...nextauth]`
-- **What it does**: Handles all authentication-related requests including sign-in, sign-out, session retrieval, and CSRF protection.
+- **What it does**: Handles all authentication-related requests including sign-in... Also captures and verifies `User-Agent` to track devices and sends an Email/SMS alert for new logins.
 - **How to implement**: Use `next-auth` hooks like `signIn()`, `signOut()`, or `useSession()` on the client side.
 - **Response**: Varies by action (e.g., set-cookie for sessions, JSON for session info).
 
@@ -16,7 +16,7 @@ This document provides a comprehensive guide to all API endpoints available in t
 ## 📝 2. User Registration & Verification
 
 ### `POST /api/signup`
-- **What it does**: Registers a new user with email, username, and password. It hashes the password, creates the user in MongoDB, and triggers a verification email.
+- **What it does**: Registers a new user with email, username, and password. It hashes the password, creates the user in MongoDB, captures the initial device `User-Agent`, and triggers a verification email.
 - **How to implement**:
   - **Body**: `{ "email": "string", "username": "string", "password": "password" }`
 - **Response**:
