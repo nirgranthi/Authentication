@@ -62,7 +62,10 @@ const userSchema = new Schema({
     },
     forgotPasswordTokenExpiry: {
         type: Date
-    }
+    },
+    devices: [{
+        type: String
+    }]
 }, { timestamps: true }
 );
 

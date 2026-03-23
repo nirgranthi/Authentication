@@ -67,14 +67,25 @@ export const authOptions: NextAuthOptions = {
     ],
     callbacks: {
         async signIn({ user, account }) {
-            if (account?.provider === "credentials") {
+            const { headers } = await import("next/headers");
+            const reqHeaders = await headers();
+            const userAgent = reqHeaders.get("user-agent") || "Unknown Device";
+
+            if (account?.provider === "credentials" || account?.provider === "phone-otp") {
                 // user here is the Mongoose document returned from authorize()
-                const dbUser = user as { isVerified?: boolean }
+                const dbUser = user as { isVerified?: boolean; email?: string; phoneNumber?: string };
 
                 // Block login if isVerified is explicitly false
                 if (dbUser.isVerified === false) {
                     return false
                 }
+
+                if (dbUser.email) {
+                    await import("@/features/device-alert/checkDevice").then(m => 
+                        m.checkAndAlertDevice(dbUser.email!, userAgent, dbUser.phoneNumber)
+                    );
+                }
+
                 return true
             }
 
@@ -96,8 +107,13 @@ export const authOptions: NextAuthOptions = {
                             provider: account?.provider,
                             providerId: account?.providerAccountId,
                             isVerified: true, // Social accounts are generally verified
+                            devices: [userAgent]
                         });
                         await newUser.save();
+                    } else {
+                        await import("@/features/device-alert/checkDevice").then(m => 
+                            m.checkAndAlertDevice(user.email!, userAgent, existingUser.phoneNumber)
+                        );
                     }
                 }
                 return true;

@@ -37,10 +37,13 @@ export async function POST(req: NextRequest) {
         }
 
 
+        const userAgent = req.headers.get('user-agent') || 'Unknown Device'
+
         await User.create({
             email: normalizedEmail,
             username: normalizedUsername,
             password: hashedPassword,
+            devices: [userAgent]
         })
         console.log('user added to DB: ', username)
 
