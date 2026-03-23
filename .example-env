@@ -1,0 +1,13 @@
+MONGO_URL = 
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET="any random string"
+EMAIL_USER=
+EMAIL_PASS=
+GOOGLE_CLIENT_ID = 
+GOOGLE_CLIENT_SECRET = 
+
+
+if these values are not provided/wrong, fallback is sending otp to console log which is commentted out rn
+TWILIO_ACCOUNT_SID = 
+TWILIO_AUTH_TOKEN = 
+TWILIO_PHONE_NUMBER = 

@@ -48,3 +48,11 @@ bun dev
 - - What they do
 - - How to implement them
 - - What there response looks like
+
+## List of features lacking for Production Grade Quality
+- Rate limiting:- for signup and otp
+- Data integrity(schema checks):- zod or yup
+- Logging:- it is logging to console.log for now
+- Automated tests
+- Multiple db calls
+- Security headers(CSRF)
